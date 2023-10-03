@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">StoryApp</string>
-    <string name="auth_screen_dont_have_account_wording">Don’t have an account yet? No worries! Join our community today and start your journey with us. Click here tor register!</string>
-    <string name="auth_screen_already_have_account_wording">Already have an account? Great! You can simply log in to continue enjoying our services. Click here to register!</string>
+    <string name="auth_screen_dont_have_account_wording">Don’t have an account yet?\nNo worries! Join our community today and start your journey with us. Click here tor register!</string>
+    <string name="auth_screen_already_have_account_wording">Already have an account?\nGreat! You can simply log in to continue enjoying our services. Click here to log in!</string>
     <string name="email" translatable="false">Email</string>
     <string name="name" translatable="false">Name</string>
     <string name="password" translatable="false">Password</string>
