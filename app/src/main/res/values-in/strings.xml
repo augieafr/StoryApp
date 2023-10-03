@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="auth_screen_dont_have_account_wording">Belum memiliki akun? Tidak masalah! Bergabunglah dengan komunitas kami hari ini dan mulailah perjalanan Anda bersama kami. Klik disini untuk register!</string>
+    <string name="auth_screen_already_have_account_wording">Sudah memiliki akun? Bagus! Anda cukup masuk untuk melanjutkan menikmati layanan kami. Klik disini untuk login!</string>
+</resources>
