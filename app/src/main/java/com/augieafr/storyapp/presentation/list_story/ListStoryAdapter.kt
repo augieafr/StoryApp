@@ -10,11 +10,11 @@ import com.augieafr.storyapp.presentation.list_story.model.StoryUIModel
 class ListStoryAdapter : ListAdapter<StoryUIModel, ListStoryViewHolder>(
     object : DiffUtil.ItemCallback<StoryUIModel>() {
         override fun areItemsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
-            oldItem == newItem
+            oldItem.id == newItem.id
 
 
         override fun areContentsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
-            oldItem.id == newItem.id
+            oldItem == newItem
 
     }
 ) {
