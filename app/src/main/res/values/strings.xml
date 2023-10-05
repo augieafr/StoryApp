@@ -7,4 +7,6 @@
     <string name="password" translatable="false">Password</string>
     <string name="login" translatable="false">Login</string>
     <string name="register" translatable="false">Register</string>
+    <string name="add_story_button_content_description">Add story</string>
+    <string name="story_photo_content_description">Story photo</string>
 </resources>

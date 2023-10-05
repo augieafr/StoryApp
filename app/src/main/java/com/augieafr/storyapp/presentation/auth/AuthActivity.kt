@@ -1,5 +1,6 @@
 package com.augieafr.storyapp.presentation.auth
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
@@ -9,8 +10,10 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import com.augieafr.storyapp.R
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
+import com.augieafr.storyapp.presentation.home.HomeActivity
 
 class AuthActivity : AppCompatActivity() {
 
@@ -27,6 +30,16 @@ class AuthActivity : AppCompatActivity() {
 
     private fun initView() {
         setupRegisterWording()
+        binding.btnContinue.setOnClickListener {
+            // TODO login / register
+            val optionsCompat: ActivityOptionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this, binding.imgLogo, "transitionLogo"
+                )
+            Intent(this@AuthActivity, HomeActivity::class.java).also {
+                this@AuthActivity.startActivity(it, optionsCompat.toBundle())
+            }
+        }
     }
 
     private fun setupRegisterWording() {
