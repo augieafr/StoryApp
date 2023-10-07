@@ -7,6 +7,10 @@
     <string name="password" translatable="false">Password</string>
     <string name="login" translatable="false">Login</string>
     <string name="register" translatable="false">Register</string>
-    <string name="add_story_button_content_description">Add story</string>
-    <string name="story_photo_content_description">Story photo</string>
+    <string name="add_story">Add story</string>
+    <string name="story_photo">Story photo</string>
+    <string name="upload">Upload</string>
+    <string name="share_your_story">Share your story</string>
+    <string name="upload_photo">Upload your photo</string>
+    <string name="click_to_upload_your_photo">Click to upload your photo</string>
 </resources>

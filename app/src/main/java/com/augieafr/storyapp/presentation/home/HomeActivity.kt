@@ -1,9 +1,11 @@
 package com.augieafr.storyapp.presentation.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.augieafr.storyapp.databinding.ActivityHomeBinding
+import com.augieafr.storyapp.presentation.add_story.AddStoryActivity
 import com.augieafr.storyapp.presentation.list_story.ListStoryFragment
 
 class HomeActivity : AppCompatActivity() {
@@ -24,6 +26,7 @@ class HomeActivity : AppCompatActivity() {
 
         fabAdd.setOnClickListener {
             // TODO: intent to create story activity
+            startActivity(Intent(this@HomeActivity, AddStoryActivity::class.java))
         }
     }
 

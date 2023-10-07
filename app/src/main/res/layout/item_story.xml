@@ -13,9 +13,10 @@
         <ImageView
             android:id="@+id/imgName"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/story_photo_content_description"
+            android:contentDescription="@string/story_photo"
+            app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
