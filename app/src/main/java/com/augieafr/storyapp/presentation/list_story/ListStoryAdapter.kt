@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.augieafr.storyapp.data.model.ListStoryItem
 import com.augieafr.storyapp.databinding.ItemStoryBinding
-import com.augieafr.storyapp.presentation.list_story.model.StoryUIModel
 
-class ListStoryAdapter : ListAdapter<StoryUIModel, ListStoryViewHolder>(
-    object : DiffUtil.ItemCallback<StoryUIModel>() {
-        override fun areItemsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
+class ListStoryAdapter : ListAdapter<ListStoryItem, ListStoryViewHolder>(
+    object : DiffUtil.ItemCallback<ListStoryItem>() {
+        override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem) =
             oldItem.id == newItem.id
 
 
-        override fun areContentsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
+        override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem) =
             oldItem == newItem
 
     }

@@ -5,13 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.local.preferences.dataStore
+import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.FragmentListStoryBinding
+import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 
 class ListStoryFragment : Fragment() {
 
     private var _binding: FragmentListStoryBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel by viewModels<ListStoryViewModel> {
+        ViewModelProvider(
+            UserPreference.getInstance(requireContext().dataStore),
+            ApiConfig.getApiService()
+        )
+    }
 
     private lateinit var adapter: ListStoryAdapter
     override fun onCreateView(
@@ -27,6 +39,14 @@ class ListStoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initAdapter()
+        initObserver()
+    }
+
+    private fun initObserver() {
+        viewModel.listStory.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
+
     }
 
     private fun initAdapter() = with(binding) {

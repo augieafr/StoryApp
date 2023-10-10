@@ -8,15 +8,21 @@ import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.model.ErrorResponse
 import com.augieafr.storyapp.data.model.LoginPayload
 import com.augieafr.storyapp.data.model.RegisterPayload
-import com.augieafr.storyapp.data.remote.ApiConfig
+import com.augieafr.storyapp.data.remote.ApiService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AuthViewModel(private val userPreference: UserPreference) : ViewModel() {
+class AuthViewModel(
+    private val userPreference: UserPreference,
+    private val apiService: ApiService
+) : ViewModel() {
 
     var isLoginScreen = true
+
+    val getToken = userPreference.getUserToken()
 
     private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
     val isLoading: LiveData<Boolean>
@@ -30,7 +36,6 @@ class AuthViewModel(private val userPreference: UserPreference) : ViewModel() {
     val isSuccessAuthentication: LiveData<Boolean>
         get() = _isSuccessAuthentication
 
-    private val apiService = ApiConfig.getApiService()
     fun login(email: String, password: String) = viewModelScope.launch {
         _isLoading.value = true
 
@@ -40,7 +45,7 @@ class AuthViewModel(private val userPreference: UserPreference) : ViewModel() {
                 _isLoading.postValue(false)
                 result.body()?.let {
                     if (!it.error) {
-                        userPreference.setUserToken(it.loginResult.token)
+                        userPreference.setUserToken("Bearer " + it.loginResult.token)
                         _isSuccessAuthentication.postValue(true)
                     } else {
                         _isError.postValue(it.message)
@@ -52,6 +57,7 @@ class AuthViewModel(private val userPreference: UserPreference) : ViewModel() {
                 _isError.postValue(errorResponse.message)
                 _isLoading.postValue(false)
             }
+            cancel()
         }
     }
 

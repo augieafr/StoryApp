@@ -9,7 +9,14 @@
         android:id="@+id/rvStory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         tools:listitem="@layout/item_story" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="?colorPrimary"
+        android:visibility="gone" />
 
 </FrameLayout>

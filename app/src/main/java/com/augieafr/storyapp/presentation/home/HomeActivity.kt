@@ -21,7 +21,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initUi() = with(binding) {
         supportFragmentManager.commit {
-            add(fragmentContainer.id, ListStoryFragment.newInstance())
+            replace(fragmentContainer.id, ListStoryFragment.newInstance())
         }
 
         fabAdd.setOnClickListener {

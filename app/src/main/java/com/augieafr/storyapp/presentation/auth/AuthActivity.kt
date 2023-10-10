@@ -15,6 +15,7 @@ import androidx.core.widget.addTextChangedListener
 import com.augieafr.storyapp.R
 import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.local.preferences.dataStore
+import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
 import com.augieafr.storyapp.presentation.utils.Alert
@@ -22,12 +23,13 @@ import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.areFormsHaveError
 import com.augieafr.storyapp.presentation.utils.isEmpty
+import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
     private val viewModel by viewModels<AuthViewModel> {
-        ViewModelProvider(UserPreference.getInstance(this.dataStore))
+        ViewModelProvider(UserPreference.getInstance(this.dataStore), ApiConfig.getApiService())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +79,7 @@ class AuthActivity : AppCompatActivity() {
         }
 
         viewModel.isLoading.observe(this) {
-            setLoadingIndicator(it)
+            binding.progressBar.setLoadingVisibility(it)
         }
     }
 
@@ -173,10 +175,6 @@ class AuthActivity : AppCompatActivity() {
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }
-    }
-
-    private fun setLoadingIndicator(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun changeScreenToLogin() {
