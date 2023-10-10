@@ -11,35 +11,137 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.widget.addTextChangedListener
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.local.preferences.dataStore
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
+import com.augieafr.storyapp.presentation.utils.Alert
+import com.augieafr.storyapp.presentation.utils.AlertType
+import com.augieafr.storyapp.presentation.utils.ViewModelProvider
+import com.augieafr.storyapp.presentation.utils.areFormsHaveError
+import com.augieafr.storyapp.presentation.utils.isEmpty
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
-    private val viewModel by viewModels<AuthViewModel>()
+    private val viewModel by viewModels<AuthViewModel> {
+        ViewModelProvider(UserPreference.getInstance(this.dataStore))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initObserver()
         initView()
     }
 
     private fun initView() {
         setupRegisterWording()
-        binding.btnContinue.setOnClickListener {
-            // TODO login / register
-            val optionsCompat: ActivityOptionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    this, binding.imgLogo, "transitionLogo"
+        setupTextInput()
+        onContinueButtonClicked()
+    }
+
+    private fun initObserver() {
+        viewModel.isError.observe(this) {
+            if (!it.isNullOrEmpty()) {
+                Alert.showAlert(
+                    this,
+                    AlertType.ERROR,
+                    it
                 )
-            Intent(this@AuthActivity, HomeActivity::class.java).also {
-                this@AuthActivity.startActivity(it, optionsCompat.toBundle())
             }
         }
+
+        viewModel.isSuccessAuthentication.observe(this) {
+            if (viewModel.isLoginScreen) {
+                Alert.showAlert(
+                    this,
+                    AlertType.SUCCESS,
+                    getString(R.string.login_successfully),
+                ) {
+                    goToHomeScreen()
+                }
+            } else {
+                Alert.showAlert(
+                    this,
+                    AlertType.SUCCESS,
+                    getString(R.string.register_successfully),
+                ) {
+                    changeScreenToLogin()
+                }
+            }
+        }
+
+        viewModel.isLoading.observe(this) {
+            setLoadingIndicator(it)
+        }
+    }
+
+    private fun onContinueButtonClicked() = with(binding) {
+        btnContinue.setOnClickListener {
+            if (viewModel.isLoginScreen) {
+                val areFormsHaveError = areFormsHaveError(
+                    edtEmail,
+                    edtPassword
+                ) {
+                    it.isEmpty(getString(R.string.field_must_not_be_empty))
+                }
+                if (!areFormsHaveError) viewModel.login(
+                    edtEmail.text.toString(),
+                    edtPassword.text.toString()
+                )
+            } else {
+                val areFormsHaveError = areFormsHaveError(
+                    edtName,
+                    edtEmail,
+                    edtPassword
+                ) {
+                    it.isEmpty(getString(R.string.field_must_not_be_empty))
+                }
+                if (!areFormsHaveError) viewModel.register(
+                    edtName.text.toString(),
+                    edtEmail.text.toString(),
+                    edtPassword.text.toString()
+                )
+            }
+        }
+    }
+
+    private fun setupTextInput() = with(binding) {
+        edtPassword.addTextChangedListener(
+            afterTextChanged = {
+                if (it.toString().length < 8) {
+                    edtPassword.error = getString(R.string.password_must_be_at_least_8_characters)
+                } else {
+                    edtPassword.error = null
+                }
+            }
+        )
+
+        edtEmail.addTextChangedListener(
+            afterTextChanged = {
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(it.toString()).matches()) {
+                    edtEmail.error = getString(R.string.email_not_valid)
+                } else {
+                    edtEmail.error = null
+                }
+            }
+        )
+    }
+
+    private fun goToHomeScreen() {
+        val optionsCompat: ActivityOptionsCompat =
+            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this, binding.imgLogo, "transitionLogo"
+            )
+        Intent(this@AuthActivity, HomeActivity::class.java).also {
+            this@AuthActivity.startActivity(it, optionsCompat.toBundle())
+        }
+        finish()
     }
 
     private fun setupRegisterWording() {
@@ -56,21 +158,9 @@ class AuthActivity : AppCompatActivity() {
             setSpan(
                 object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        with(binding) {
-                            if (viewModel.isLoginScreen) {
-                                viewModel.isLoginScreen = false
-                                root.transitionToEnd()
-                                btnContinue.text = getString(R.string.register)
-                                setupRegisterWording()
-                            } else {
-                                viewModel.isLoginScreen = true
-                                root.transitionToStart()
-                                btnContinue.text = getString(R.string.login)
-                                setupRegisterWording()
-                            }
-                        }
+                        if (viewModel.isLoginScreen) changeScreenToRegister()
+                        else changeScreenToLogin()
                     }
-
                 },
                 startIndex,
                 endIndex,
@@ -83,5 +173,23 @@ class AuthActivity : AppCompatActivity() {
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }
+    }
+
+    private fun setLoadingIndicator(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun changeScreenToLogin() {
+        viewModel.isLoginScreen = true
+        binding.root.transitionToStart()
+        binding.btnContinue.text = getString(R.string.login)
+        setupRegisterWording()
+    }
+
+    private fun changeScreenToRegister() {
+        viewModel.isLoginScreen = false
+        binding.root.transitionToEnd()
+        binding.btnContinue.text = getString(R.string.register)
+        setupRegisterWording()
     }
 }

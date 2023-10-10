@@ -4,7 +4,7 @@
     <string name="auth_screen_already_have_account_wording">Already have an account?\nGreat! You can simply log in to continue enjoying our services. Click here to log in!</string>
     <string name="email" translatable="false">Email</string>
     <string name="name" translatable="false">Name</string>
-    <string name="password" translatable="false">Password</string>
+    <string name="password">Password</string>
     <string name="login" translatable="false">Login</string>
     <string name="register" translatable="false">Register</string>
     <string name="add_story">Add story</string>
@@ -13,4 +13,9 @@
     <string name="share_your_story">Share your story</string>
     <string name="upload_photo">Upload your photo</string>
     <string name="click_to_upload_your_photo">Click to upload your photo</string>
+    <string name="password_must_be_at_least_8_characters">Password must be at least 8 characters</string>
+    <string name="email_not_valid">Email not valid</string>
+    <string name="field_must_not_be_empty">Field must not be empty</string>
+    <string name="register_successfully">Register success, please login to continue</string>
+    <string name="login_successfully">Login success</string>
 </resources>

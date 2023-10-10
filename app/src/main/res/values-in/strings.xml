@@ -3,10 +3,16 @@
     <string name="app_name">StoryApp</string>
     <string name="auth_screen_dont_have_account_wording">Belum memiliki akun? Tidak masalah! Bergabunglah dengan komunitas kami hari ini dan mulailah perjalanan Anda bersama kami. Klik disini untuk register!</string>
     <string name="auth_screen_already_have_account_wording">Sudah memiliki akun?\nBagus! Anda cukup masuk untuk melanjutkan menikmati layanan kami. Klik disini untuk login!</string>
+    <string name="password">Kata sandi</string>
     <string name="add_story">Tambah cerita</string>
     <string name="story_photo">Foto cerita</string>
     <string name="upload">Unggah</string>
     <string name="share_your_story">Bagikan ceritamu</string>
     <string name="upload_photo">Unggah fotomu</string>
     <string name="click_to_upload_your_photo">Ketuk untuk unggah fotomu</string>
+    <string name="password_must_be_at_least_8_characters">Kata sandi setidaknya berjumlah 8 karakter</string>
+    <string name="email_not_valid">Email tidak valid</string>
+    <string name="field_must_not_be_empty">Kolom tidak boleh kosong</string>
+    <string name="register_successfully">Berhasil register, silakan login untuk melanjutkan</string>
+    <string name="login_successfully">Berhasil login</string>
 </resources>

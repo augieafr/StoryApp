@@ -1,9 +1,80 @@
 package com.augieafr.storyapp.presentation.auth
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.model.ErrorResponse
+import com.augieafr.storyapp.data.model.LoginPayload
+import com.augieafr.storyapp.data.model.RegisterPayload
+import com.augieafr.storyapp.data.remote.ApiConfig
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(private val userPreference: UserPreference) : ViewModel() {
 
     var isLoginScreen = true
 
+    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
+    private val _isError = MutableLiveData<String>()
+    val isError: LiveData<String>
+        get() = _isError
+
+    private val _isSuccessAuthentication: MutableLiveData<Boolean> = MutableLiveData()
+    val isSuccessAuthentication: LiveData<Boolean>
+        get() = _isSuccessAuthentication
+
+    private val apiService = ApiConfig.getApiService()
+    fun login(email: String, password: String) = viewModelScope.launch {
+        _isLoading.value = true
+
+        withContext(Dispatchers.IO) {
+            val result = apiService.login(LoginPayload(email, password))
+            if (result.isSuccessful) {
+                _isLoading.postValue(false)
+                result.body()?.let {
+                    if (!it.error) {
+                        userPreference.setUserToken(it.loginResult.token)
+                        _isSuccessAuthentication.postValue(true)
+                    } else {
+                        _isError.postValue(it.message)
+                    }
+                }
+            } else {
+                val errorResponse =
+                    Gson().fromJson(result.errorBody()?.string(), ErrorResponse::class.java)
+                _isError.postValue(errorResponse.message)
+                _isLoading.postValue(false)
+            }
+        }
+    }
+
+    fun register(name: String, email: String, password: String) = viewModelScope.launch {
+        _isLoading.value = true
+
+        withContext(Dispatchers.IO) {
+            val result = apiService.register(RegisterPayload(name, email, password))
+            if (result.isSuccessful) {
+                _isLoading.postValue(false)
+                result.body()?.let {
+                    if (!it.error) {
+                        _isSuccessAuthentication.postValue(true)
+                    } else {
+                        _isError.postValue(it.message)
+                    }
+                }
+            } else {
+                val errorResponse =
+                    Gson().fromJson(result.errorBody()?.string(), ErrorResponse::class.java)
+                _isError.postValue(errorResponse.message)
+                _isLoading.postValue(false)
+            }
+        }
+    }
 }
