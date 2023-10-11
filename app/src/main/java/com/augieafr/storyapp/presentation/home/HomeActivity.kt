@@ -2,6 +2,7 @@ package com.augieafr.storyapp.presentation.home
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.augieafr.storyapp.databinding.ActivityHomeBinding
@@ -25,9 +26,13 @@ class HomeActivity : AppCompatActivity() {
         }
 
         fabAdd.setOnClickListener {
-            // TODO: intent to create story activity
             startActivity(Intent(this@HomeActivity, AddStoryActivity::class.java))
         }
-    }
 
+        onBackPressedDispatcher.addCallback {
+            binding.imgLogo.transitionName = null
+            window.sharedElementExitTransition.duration = 0
+            finish()
+        }
+    }
 }

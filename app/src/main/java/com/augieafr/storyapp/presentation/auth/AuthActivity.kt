@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
 import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.local.preferences.dataStore
@@ -24,6 +25,8 @@ import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.areFormsHaveError
 import com.augieafr.storyapp.presentation.utils.isEmpty
 import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
 
@@ -48,6 +51,29 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun initObserver() {
+        val firstTimeCheckToken = Job()
+        lifecycleScope.launch {
+            viewModel.getToken.collect {
+                if (firstTimeCheckToken.isCancelled && it.isNotEmpty()) {
+                    Alert.showAlert(
+                        this@AuthActivity,
+                        AlertType.SUCCESS,
+                        getString(R.string.login_successfully),
+                    ) {
+                        goToHomeScreen()
+                    }
+                }
+
+                launch(firstTimeCheckToken) {
+                    if (it.isNotEmpty()) {
+                        goToHomeScreen()
+                    }
+                    firstTimeCheckToken.cancel()
+                }
+
+            }
+        }
+
         viewModel.isError.observe(this) {
             if (!it.isNullOrEmpty()) {
                 Alert.showAlert(
@@ -58,23 +84,13 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.isSuccessAuthentication.observe(this) {
-            if (viewModel.isLoginScreen) {
-                Alert.showAlert(
-                    this,
-                    AlertType.SUCCESS,
-                    getString(R.string.login_successfully),
-                ) {
-                    goToHomeScreen()
-                }
-            } else {
-                Alert.showAlert(
-                    this,
-                    AlertType.SUCCESS,
-                    getString(R.string.register_successfully),
-                ) {
-                    changeScreenToLogin()
-                }
+        viewModel.isSuccessRegister.observe(this) {
+            Alert.showAlert(
+                this,
+                AlertType.SUCCESS,
+                getString(R.string.register_successfully),
+            ) {
+                changeScreenToLogin()
             }
         }
 
@@ -143,7 +159,6 @@ class AuthActivity : AppCompatActivity() {
         Intent(this@AuthActivity, HomeActivity::class.java).also {
             this@AuthActivity.startActivity(it, optionsCompat.toBundle())
         }
-        finish()
     }
 
     private fun setupRegisterWording() {

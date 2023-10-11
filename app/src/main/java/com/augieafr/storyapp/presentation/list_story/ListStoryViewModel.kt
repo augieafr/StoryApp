@@ -12,7 +12,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class ListStoryViewModel(
@@ -38,10 +37,8 @@ class ListStoryViewModel(
         _isLoading.value = true
 
         withContext(Dispatchers.IO) {
-            runBlocking {
-                preference.getUserToken().take(1).collect {
-                    getStoriesFromApi(it)
-                }
+            preference.getUserToken().take(1).collect {
+                getStoriesFromApi(it)
             }
         }
     }
@@ -51,7 +48,7 @@ class ListStoryViewModel(
         if (result.isSuccessful) {
             _isLoading.postValue(false)
             if (result.body()?.listStory?.isEmpty() == true) {
-                _errorMessage.postValue("No story found")
+                _errorMessage.postValue(ListStoryFragment.NO_STORY_FOUND)
                 return
             }
             result.body()?.let {

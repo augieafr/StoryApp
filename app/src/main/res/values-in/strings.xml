@@ -15,4 +15,5 @@
     <string name="field_must_not_be_empty">Kolom tidak boleh kosong</string>
     <string name="register_successfully">Berhasil register, silakan login untuk melanjutkan</string>
     <string name="login_successfully">Berhasil login</string>
+    <string name="no_story_found">Belum ada cerita, ayo tambahkan ceritamu!</string>
 </resources>

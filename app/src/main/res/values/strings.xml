@@ -18,4 +18,5 @@
     <string name="field_must_not_be_empty">Field must not be empty</string>
     <string name="register_successfully">Register success, please login to continue</string>
     <string name="login_successfully">Login success</string>
+    <string name="no_story_found">There is no story yet, let\'s make one!</string>
 </resources>

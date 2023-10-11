@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="8dp"
-    android:background="?colorSurface"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="24dp"
+    app:cardBackgroundColor="?colorSurfaceVariant"
+    app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,8 +16,8 @@
             android:id="@+id/imgName"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
             android:contentDescription="@string/story_photo"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="16:8"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,9 +28,9 @@
             style="@style/TextAppearance.Material3.TitleMedium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginHorizontal="8dp"
-            android:textColor="?colorOnSurface"
+            android:layout_marginTop="16dp"
+            android:textColor="?colorOnSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imgName"
@@ -38,17 +38,18 @@
 
         <TextView
             android:id="@+id/tvDescription"
+            style="@style/TextAppearance.Material3.BodySmall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/TextAppearance.Material3.BodySmall"
-            android:layout_marginTop="8dp"
-            android:lines="3"
-            android:ellipsize="end"
             android:layout_marginHorizontal="8dp"
-            android:textColor="?colorOnSurface"
+            android:layout_marginVertical="8dp"
+            android:ellipsize="end"
+            android:lines="3"
+            android:textColor="?colorOnSurfaceVariant"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvName"
-            app:layout_constraintEnd_toEndOf="parent"
             tools:text="@tools:sample/lorem/random" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

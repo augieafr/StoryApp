@@ -11,7 +11,6 @@ import com.augieafr.storyapp.data.model.RegisterPayload
 import com.augieafr.storyapp.data.remote.ApiService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -32,9 +31,9 @@ class AuthViewModel(
     val isError: LiveData<String>
         get() = _isError
 
-    private val _isSuccessAuthentication: MutableLiveData<Boolean> = MutableLiveData()
-    val isSuccessAuthentication: LiveData<Boolean>
-        get() = _isSuccessAuthentication
+    private val _isSuccessRegister: MutableLiveData<Boolean> = MutableLiveData()
+    val isSuccessRegister: LiveData<Boolean>
+        get() = _isSuccessRegister
 
     fun login(email: String, password: String) = viewModelScope.launch {
         _isLoading.value = true
@@ -46,7 +45,6 @@ class AuthViewModel(
                 result.body()?.let {
                     if (!it.error) {
                         userPreference.setUserToken("Bearer " + it.loginResult.token)
-                        _isSuccessAuthentication.postValue(true)
                     } else {
                         _isError.postValue(it.message)
                     }
@@ -57,7 +55,6 @@ class AuthViewModel(
                 _isError.postValue(errorResponse.message)
                 _isLoading.postValue(false)
             }
-            cancel()
         }
     }
 
@@ -70,7 +67,7 @@ class AuthViewModel(
                 _isLoading.postValue(false)
                 result.body()?.let {
                     if (!it.error) {
-                        _isSuccessAuthentication.postValue(true)
+                        _isSuccessRegister.postValue(true)
                     } else {
                         _isError.postValue(it.message)
                     }
