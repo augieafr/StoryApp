@@ -30,8 +30,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         onBackPressedDispatcher.addCallback {
-            binding.imgLogo.transitionName = null
-            window.sharedElementExitTransition.duration = 0
+            // fixing shared element bug, finish activity right away when back button is pressed
+            // no need to wait for transition animation to finish
             finish()
         }
     }
