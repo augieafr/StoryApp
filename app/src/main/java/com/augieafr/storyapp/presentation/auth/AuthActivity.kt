@@ -11,7 +11,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
 import com.augieafr.storyapp.data.local.preferences.UserPreference
@@ -23,7 +22,7 @@ import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.areFormsHaveError
-import com.augieafr.storyapp.presentation.utils.isEmpty
+import com.augieafr.storyapp.presentation.utils.errorIfEmpty
 import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -46,7 +45,6 @@ class AuthActivity : AppCompatActivity() {
 
     private fun initView() {
         setupRegisterWording()
-        setupTextInput()
         onContinueButtonClicked()
     }
 
@@ -103,52 +101,30 @@ class AuthActivity : AppCompatActivity() {
         btnContinue.setOnClickListener {
             if (viewModel.isLoginScreen) {
                 val areFormsHaveError = areFormsHaveError(
-                    edtEmail,
-                    edtPassword
+                    tilEmail.editText,
+                    tilPassword.editText
                 ) {
-                    it.isEmpty(getString(R.string.field_must_not_be_empty))
+                    it.errorIfEmpty(getString(R.string.field_must_not_be_empty))
                 }
                 if (!areFormsHaveError) viewModel.login(
-                    edtEmail.text.toString(),
-                    edtPassword.text.toString()
+                    tilEmail.text,
+                    tilPassword.text
                 )
             } else {
                 val areFormsHaveError = areFormsHaveError(
-                    edtName,
-                    edtEmail,
-                    edtPassword
+                    tilName.editText,
+                    tilEmail.editText,
+                    tilPassword.editText
                 ) {
-                    it.isEmpty(getString(R.string.field_must_not_be_empty))
+                    it.errorIfEmpty(getString(R.string.field_must_not_be_empty))
                 }
                 if (!areFormsHaveError) viewModel.register(
-                    edtName.text.toString(),
-                    edtEmail.text.toString(),
-                    edtPassword.text.toString()
+                    tilName.text,
+                    tilEmail.text,
+                    tilPassword.text
                 )
             }
         }
-    }
-
-    private fun setupTextInput() = with(binding) {
-        edtPassword.addTextChangedListener(
-            afterTextChanged = {
-                if (it.toString().length < 8) {
-                    edtPassword.error = getString(R.string.password_must_be_at_least_8_characters)
-                } else {
-                    edtPassword.error = null
-                }
-            }
-        )
-
-        edtEmail.addTextChangedListener(
-            afterTextChanged = {
-                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(it.toString()).matches()) {
-                    edtEmail.error = getString(R.string.email_not_valid)
-                } else {
-                    edtEmail.error = null
-                }
-            }
-        )
     }
 
     private fun goToHomeScreen() {

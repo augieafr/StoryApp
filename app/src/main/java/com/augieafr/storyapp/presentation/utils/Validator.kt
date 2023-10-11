@@ -17,7 +17,7 @@ fun areFormsHaveError(
     return hasError
 }
 
-fun EditText.isEmpty(errorMessage: String) {
+fun EditText.errorIfEmpty(errorMessage: String) {
     if (text.toString().isEmpty()) {
         error = errorMessage
     }

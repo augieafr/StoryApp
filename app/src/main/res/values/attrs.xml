@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="auth_input_type">
+        <enum name="email" value="1" />
+        <enum name="password" value="2" />
+    </attr>
+</resources>
