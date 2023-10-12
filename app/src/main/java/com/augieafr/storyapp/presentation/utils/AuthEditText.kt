@@ -48,7 +48,8 @@ class AuthEditText(context: Context, attributeSet: AttributeSet) :
             PASSWORD_TYPE -> {
                 hint = context.getString(R.string.password)
                 with(editText) {
-                    inputType = EditorInfo.TYPE_TEXT_VARIATION_PASSWORD
+                    inputType =
+                        EditorInfo.TYPE_TEXT_VARIATION_PASSWORD or EditorInfo.TYPE_CLASS_TEXT
                     addTextChangedListener(afterTextChanged = {
                         error = if (it.toString().length < 8) {
                             errorState.value = errorState.value.copy(second = true)
