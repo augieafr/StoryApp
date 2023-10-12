@@ -11,7 +11,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.augieafr.storyapp.R
 import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.local.preferences.dataStore
@@ -20,11 +22,10 @@ import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
+import com.augieafr.storyapp.presentation.utils.AuthEditText
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
-import com.augieafr.storyapp.presentation.utils.areFormsHaveError
-import com.augieafr.storyapp.presentation.utils.errorIfEmpty
 import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
 class AuthActivity : AppCompatActivity() {
@@ -49,26 +50,37 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun initObserver() {
-        val firstTimeCheckToken = Job()
         lifecycleScope.launch {
-            viewModel.getToken.collect {
-                if (firstTimeCheckToken.isCancelled && it.isNotEmpty()) {
-                    Alert.showAlert(
-                        this@AuthActivity,
-                        AlertType.SUCCESS,
-                        getString(R.string.login_successfully),
-                    ) {
-                        goToHomeScreen()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    with(binding) {
+                        merge(tilName.errorState, tilEmail.errorState, tilPassword.errorState)
+                            .collect {
+                                viewModel.updateFormErrorState(it)
+                                setButtonEnabled()
+                            }
                     }
                 }
 
-                launch(firstTimeCheckToken) {
-                    if (it.isNotEmpty()) {
-                        goToHomeScreen()
+                viewModel.getToken.collect {
+                    if (viewModel.firstTimeCheckToken.isCancelled && it.isNotEmpty()) {
+                        Alert.showAlert(
+                            this@AuthActivity,
+                            AlertType.SUCCESS,
+                            getString(R.string.login_successfully),
+                        ) {
+                            goToHomeScreen()
+                        }
                     }
-                    firstTimeCheckToken.cancel()
-                }
 
+                    launch(viewModel.firstTimeCheckToken) {
+                        if (it.isNotEmpty()) {
+                            goToHomeScreen()
+                        }
+                        viewModel.firstTimeCheckToken.cancel()
+                    }
+
+                }
             }
         }
 
@@ -97,28 +109,26 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    private fun setButtonEnabled() = with(viewModel) {
+        if (isLoginScreen) {
+            binding.btnContinue.isEnabled = formValidMap[AuthEditText.EMAIL_TYPE] == false &&
+                    formValidMap[AuthEditText.PASSWORD_TYPE] == false
+            return
+        }
+        binding.btnContinue.isEnabled = formValidMap[AuthEditText.NAME_TYPE] == false &&
+                formValidMap[AuthEditText.EMAIL_TYPE] == false &&
+                formValidMap[AuthEditText.PASSWORD_TYPE] == false
+    }
+
     private fun onContinueButtonClicked() = with(binding) {
         btnContinue.setOnClickListener {
             if (viewModel.isLoginScreen) {
-                val areFormsHaveError = areFormsHaveError(
-                    tilEmail.editText,
-                    tilPassword.editText
-                ) {
-                    it.errorIfEmpty(getString(R.string.field_must_not_be_empty))
-                }
-                if (!areFormsHaveError) viewModel.login(
+                viewModel.login(
                     tilEmail.text,
                     tilPassword.text
                 )
             } else {
-                val areFormsHaveError = areFormsHaveError(
-                    tilName.editText,
-                    tilEmail.editText,
-                    tilPassword.editText
-                ) {
-                    it.errorIfEmpty(getString(R.string.field_must_not_be_empty))
-                }
-                if (!areFormsHaveError) viewModel.register(
+                viewModel.register(
                     tilName.text,
                     tilEmail.text,
                     tilPassword.text
@@ -153,6 +163,7 @@ class AuthActivity : AppCompatActivity() {
                     override fun onClick(widget: View) {
                         if (viewModel.isLoginScreen) changeScreenToRegister()
                         else changeScreenToLogin()
+                        setButtonEnabled()
                     }
                 },
                 startIndex,

@@ -2,19 +2,25 @@ package com.augieafr.storyapp.presentation.utils
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import com.augieafr.storyapp.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class AuthEditText(context: Context, attributeSet: AttributeSet) :
     TextInputLayout(context, attributeSet) {
 
     private var authInputType = 0
-    val editText = TextInputEditText(context)
-    val text: String get() = editText.text.toString()
+    private val editText = TextInputEditText(this.context)
+    var text: String
+        get() = editText.text.toString()
+        set(value) {
+            editText.setText(value)
+        }
+
+    lateinit var errorState: MutableStateFlow<Pair<Int, Boolean>>
 
     init {
         initAttrs(attributeSet)
@@ -27,7 +33,8 @@ class AuthEditText(context: Context, attributeSet: AttributeSet) :
         )
 
         try {
-            authInputType = typedArray.getInt(R.styleable.AuthEditText_auth_input_type, 0)
+            authInputType = typedArray.getInt(R.styleable.AuthEditText_auth_input_type, NAME_TYPE)
+            errorState = MutableStateFlow(Pair(authInputType, true))
         } finally {
             typedArray.recycle()
         }
@@ -44,8 +51,10 @@ class AuthEditText(context: Context, attributeSet: AttributeSet) :
                     inputType = EditorInfo.TYPE_TEXT_VARIATION_PASSWORD
                     addTextChangedListener(afterTextChanged = {
                         error = if (it.toString().length < 8) {
+                            errorState.value = errorState.value.copy(second = true)
                             context.getString(R.string.password_must_be_at_least_8_characters)
                         } else {
+                            errorState.value = errorState.value.copy(second = false)
                             null
                         }
                     })
@@ -57,24 +66,42 @@ class AuthEditText(context: Context, attributeSet: AttributeSet) :
                 with(editText) {
                     inputType = EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                     addTextChangedListener(afterTextChanged = {
-                        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(it.toString()).matches()) {
-                            editText.error = context.getString(R.string.email_not_valid)
-                        } else {
-                            editText.error = null
-                        }
+                        error =
+                            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(it.toString())
+                                    .matches()
+                            ) {
+                                errorState.value = errorState.value.copy(second = true)
+                                context.getString(R.string.email_not_valid)
+                            } else {
+                                errorState.value = errorState.value.copy(second = false)
+                                null
+                            }
                     })
                 }
             }
 
             else -> {
-                Log.d("AuthEditText", "type: $authInputType")
                 hint = hint ?: context.getString(R.string.name)
+                with(editText) {
+                    addTextChangedListener(afterTextChanged = {
+                        error =
+                            if (this@AuthEditText.text.isEmpty()
+                            ) {
+                                errorState.value = errorState.value.copy(second = true)
+                                context.getString(R.string.field_must_not_be_empty)
+                            } else {
+                                errorState.value = errorState.value.copy(second = false)
+                                null
+                            }
+                    })
+                }
             }
         }
     }
 
     companion object {
-        private const val EMAIL_TYPE = 1
-        private const val PASSWORD_TYPE = 2
+        const val NAME_TYPE = 0
+        const val EMAIL_TYPE = 1
+        const val PASSWORD_TYPE = 2
     }
 }

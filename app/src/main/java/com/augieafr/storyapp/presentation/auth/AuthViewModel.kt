@@ -11,6 +11,7 @@ import com.augieafr.storyapp.data.model.RegisterPayload
 import com.augieafr.storyapp.data.remote.ApiService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -20,6 +21,8 @@ class AuthViewModel(
 ) : ViewModel() {
 
     var isLoginScreen = true
+    val firstTimeCheckToken = Job()
+    val formValidMap = hashMapOf<Int, Boolean>()
 
     val getToken = userPreference.getUserToken()
 
@@ -79,5 +82,9 @@ class AuthViewModel(
                 _isLoading.postValue(false)
             }
         }
+    }
+
+    fun updateFormErrorState(errorState: Pair<Int, Boolean>) {
+        formValidMap[errorState.first] = errorState.second
     }
 }
