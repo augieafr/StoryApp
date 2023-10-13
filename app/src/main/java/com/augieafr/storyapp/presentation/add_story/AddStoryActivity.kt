@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
-import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.local.preferences.dataStore
-import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.ActivityAddStoryBinding
 import com.augieafr.storyapp.databinding.BottomSheetDialogImagePickerBinding
 import com.augieafr.storyapp.presentation.utils.Alert
@@ -30,10 +27,7 @@ class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
     private val viewModel by viewModels<AddStoryViewModel> {
-        ViewModelProvider(
-            UserPreference.getInstance(this.dataStore),
-            ApiConfig.getApiService()
-        )
+        ViewModelProvider(this)
     }
 
     private val launcherGallery = registerForActivityResult(

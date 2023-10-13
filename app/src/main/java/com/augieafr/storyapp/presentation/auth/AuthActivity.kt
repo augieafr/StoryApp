@@ -14,9 +14,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.augieafr.storyapp.R
-import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.local.preferences.dataStore
-import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
 import com.augieafr.storyapp.presentation.utils.Alert
@@ -31,7 +28,7 @@ class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
     private val viewModel by viewModels<AuthViewModel> {
-        ViewModelProvider(UserPreference.getInstance(this.dataStore), ApiConfig.getApiService())
+        ViewModelProvider(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
