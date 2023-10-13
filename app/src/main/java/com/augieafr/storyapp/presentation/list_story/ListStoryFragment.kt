@@ -8,9 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.augieafr.storyapp.R
-import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.local.preferences.dataStore
-import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.FragmentListStoryBinding
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
@@ -23,10 +20,7 @@ class ListStoryFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<ListStoryViewModel> {
-        ViewModelProvider(
-            UserPreference.getInstance(requireContext().dataStore),
-            ApiConfig.getApiService()
-        )
+        ViewModelProvider(requireContext())
     }
 
     private lateinit var adapter: ListStoryAdapter
