@@ -10,7 +10,6 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -138,12 +137,8 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun goToHomeScreen() {
-        val optionsCompat: ActivityOptionsCompat =
-            ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this, binding.imgLogo, "transitionLogo"
-            )
         Intent(this@AuthActivity, HomeActivity::class.java).also {
-            this@AuthActivity.startActivity(it, optionsCompat.toBundle())
+            this@AuthActivity.startActivity(it)
         }
     }
 

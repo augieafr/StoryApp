@@ -12,14 +12,13 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:transitionName="transitionLogo"
         android:contentDescription="@string/app_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/story_app_logo"
         app:tint="?colorOnBackground" />
 
-    <androidx.fragment.app.FragmentContainerView
+    <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
