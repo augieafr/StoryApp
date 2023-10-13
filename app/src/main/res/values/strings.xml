@@ -19,4 +19,9 @@
     <string name="register_successfully">Register success, please login to continue</string>
     <string name="login_successfully">Login success</string>
     <string name="no_story_found">There is no story yet, let\'s make one!</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="choose_image_from">Choose image from:</string>
+    <string name="success_upload_story">Success upload story</string>
+    <string name="please_upload_your_photo">Please upload your photo</string>
 </resources>

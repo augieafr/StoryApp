@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="16dp"
+    android:paddingVertical="32dp">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        style="@style/TextAppearance.Material3.TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_image_from"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgCamera"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/baseline_photo_camera_24"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/camera"
+        app:tint="?colorOnSurfaceVariant"
+        app:layout_constraintEnd_toStartOf="@id/imgGallery"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle" />
+
+    <TextView
+        android:id="@+id/txtCamera"
+        style="@style/TextAppearance.Material3.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/camera"
+        app:layout_constraintEnd_toEndOf="@id/imgCamera"
+        app:layout_constraintStart_toStartOf="@id/imgCamera"
+        app:layout_constraintTop_toBottomOf="@id/imgCamera" />
+
+    <ImageView
+        android:id="@+id/imgGallery"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/baseline_drive_folder_upload_24"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/gallery"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/imgCamera"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        app:tint="?colorOnSurfaceVariant" />
+
+    <TextView
+        android:id="@+id/txtGallery"
+        style="@style/TextAppearance.Material3.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gallery"
+        app:layout_constraintEnd_toEndOf="@id/imgGallery"
+        app:layout_constraintStart_toStartOf="@id/imgGallery"
+        app:layout_constraintTop_toBottomOf="@id/imgGallery" />
+</androidx.constraintlayout.widget.ConstraintLayout>

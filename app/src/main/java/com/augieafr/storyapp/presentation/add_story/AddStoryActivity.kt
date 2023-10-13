@@ -3,11 +3,25 @@ package com.augieafr.storyapp.presentation.add_story
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.local.preferences.dataStore
+import com.augieafr.storyapp.data.remote.ApiConfig
 import com.augieafr.storyapp.databinding.ActivityAddStoryBinding
+import com.augieafr.storyapp.databinding.BottomSheetDialogImagePickerBinding
+import com.augieafr.storyapp.presentation.utils.Alert
+import com.augieafr.storyapp.presentation.utils.AlertType
+import com.augieafr.storyapp.presentation.utils.ViewModelProvider
+import com.augieafr.storyapp.presentation.utils.getImageUri
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,7 +29,29 @@ import kotlinx.coroutines.launch
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
+    private val viewModel by viewModels<AddStoryViewModel> {
+        ViewModelProvider(
+            UserPreference.getInstance(this.dataStore),
+            ApiConfig.getApiService()
+        )
+    }
 
+    private val launcherGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            viewModel.storyImageUri = uri
+            setStoryImage()
+        }
+    }
+
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { isSuccess ->
+        if (isSuccess) {
+            setStoryImage()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +59,43 @@ class AddStoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initUi()
+        initObserver()
+    }
+
+    private fun initObserver() = with(viewModel) {
+        isLoading.observe(this@AddStoryActivity) {
+            binding.progressBar.visibility = if (it) {
+                android.view.View.VISIBLE
+            } else {
+                android.view.View.GONE
+            }
+        }
+
+        errorMessage.observe(this@AddStoryActivity) {
+            Alert.showAlert(
+                this@AddStoryActivity,
+                AlertType.ERROR,
+                it
+            )
+        }
+
+        isSuccessUpload.observe(this@AddStoryActivity) {
+            if (it) {
+                setResult(RESULT_SUCCESS_UPLOAD_STORY)
+                finish()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setStoryImage()
+    }
+
+    private fun setStoryImage() {
+        viewModel.storyImageUri?.let {
+            binding.imgPhoto.setImageURI(it)
+        }
     }
 
     private fun initUi() = with(binding) {
@@ -30,10 +103,71 @@ class AddStoryActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        lifecycleScope.launch {
+        if (viewModel.storyImageUri == null) lifecycleScope.launch {
             val bitmap = createAddPhotoPlaceholderBitmap()
             imgPhoto.setImageBitmap(bitmap)
         }
+
+        imgPhoto.setOnClickListener {
+            // show dialog to choose image from gallery or camera
+            showImagePickerDialog()
+        }
+
+        tvNext.setOnClickListener {
+            with(viewModel) {
+                with(binding.edtDescription) {
+                    if (text.toString().isEmpty()) {
+                        error = getString(R.string.field_must_not_be_empty)
+                        requestFocus()
+                        return@setOnClickListener
+                    }
+                }
+                storyImageUri?.let {
+                    uploadStory(it, edtDescription.text.toString(), this@AddStoryActivity)
+                } ?: run {
+                    Alert.showAlert(
+                        this@AddStoryActivity,
+                        AlertType.ERROR,
+                        getString(R.string.please_upload_your_photo)
+                    )
+                }
+            }
+        }
+
+        edtDescription.addTextChangedListener(afterTextChanged = {
+            if (it.toString().isNotEmpty()) {
+                edtDescription.error = null
+            } else {
+                edtDescription.error = getString(R.string.field_must_not_be_empty)
+            }
+        })
+    }
+
+    private fun showImagePickerDialog() {
+        val bottomSheetBinding = BottomSheetDialogImagePickerBinding.inflate(layoutInflater)
+        BottomSheetDialog(this).apply {
+            setContentView(bottomSheetBinding.root)
+            with(bottomSheetBinding) {
+                imgCamera.setOnClickListener {
+                    intentToCamera()
+                    dismiss()
+                }
+                imgGallery.setOnClickListener {
+                    intentToGallery()
+                    dismiss()
+                }
+            }
+            show()
+        }
+    }
+
+    private fun intentToGallery() {
+        launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private fun intentToCamera() {
+        viewModel.storyImageUri = getImageUri(this)
+        launcherIntentCamera.launch(viewModel.storyImageUri)
     }
 
     private suspend fun createAddPhotoPlaceholderBitmap(): Bitmap {
@@ -72,4 +206,7 @@ class AddStoryActivity : AppCompatActivity() {
         return bitmap
     }
 
+    companion object {
+        const val RESULT_SUCCESS_UPLOAD_STORY = 100
+    }
 }

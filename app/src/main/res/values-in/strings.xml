@@ -16,4 +16,9 @@
     <string name="register_successfully">Berhasil register, silakan login untuk melanjutkan</string>
     <string name="login_successfully">Berhasil login</string>
     <string name="no_story_found">Belum ada cerita, ayo tambahkan ceritamu!</string>
+    <string name="gallery">Galeri</string>
+    <string name="camera">Kamera</string>
+    <string name="choose_image_from">Pilih gambar dari:</string>
+    <string name="success_upload_story">Berhasil upload cerita</string>
+    <string name="please_upload_your_photo">Tolong upload foto ceritamu</string>
 </resources>
