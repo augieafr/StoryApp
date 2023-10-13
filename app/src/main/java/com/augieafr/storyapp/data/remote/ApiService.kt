@@ -1,5 +1,6 @@
 package com.augieafr.storyapp.data.remote
 
+import com.augieafr.storyapp.data.model.DetailResponse
 import com.augieafr.storyapp.data.model.ErrorResponse
 import com.augieafr.storyapp.data.model.ListStoryResponse
 import com.augieafr.storyapp.data.model.LoginPayload
@@ -14,6 +15,7 @@ import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -37,4 +39,10 @@ interface ApiService {
         @Part photo: MultipartBody.Part,
         @Part("description") description: RequestBody
     ): Response<ErrorResponse>
+
+    @GET("stories/{id}")
+    suspend fun getDetailStory(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<DetailResponse>
 }

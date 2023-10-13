@@ -18,6 +18,9 @@
         android:theme="@style/Theme.StoryApp"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.detail_story.DetailStoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.add_story.AddStoryActivity"
             android:exported="false" />
         <activity
@@ -25,8 +28,8 @@
             android:exported="false" />
         <activity
             android:name=".presentation.auth.AuthActivity"
-            android:noHistory="true"
-            android:exported="true">
+            android:exported="true"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,6 +55,7 @@
             <intent-filter>
                 <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
             </intent-filter>
+
             <meta-data
                 android:name="photopicker_activity:0:required"
                 android:value="" />

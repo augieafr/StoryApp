@@ -29,11 +29,7 @@ class ListStoryViewModel(
     private val _listStory = MutableLiveData<List<ListStoryItem>>()
     val listStory: LiveData<List<ListStoryItem>> get() = _listStory
 
-    init {
-        getAllStory()
-    }
-
-    private fun getAllStory() = viewModelScope.launch {
+    fun getAllStory() = viewModelScope.launch {
         _isLoading.value = true
 
         withContext(Dispatchers.IO) {

@@ -25,4 +25,6 @@
     <string name="success_upload_story">Success upload story</string>
     <string name="please_upload_your_photo">Please upload your photo</string>
     <string name="logout">Logout</string>
+    <string name="detail_story">Detail story</string>
+    <string name="logo_transition" translatable="false">logo transition</string>
 </resources>

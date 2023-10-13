@@ -14,7 +14,7 @@ import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
 
-class ListStoryFragment : Fragment() {
+class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fragment() {
 
     private var _binding: FragmentListStoryBinding? = null
     private val binding get() = _binding!!
@@ -31,6 +31,11 @@ class ListStoryFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentListStoryBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAllStory()
     }
 
     override fun onStop() {
@@ -70,7 +75,7 @@ class ListStoryFragment : Fragment() {
     }
 
     private fun initAdapter() = with(binding) {
-        adapter = ListStoryAdapter()
+        adapter = ListStoryAdapter(onItemClickListener)
         rvStory.layoutManager = LinearLayoutManager(requireContext())
         rvStory.adapter = this@ListStoryFragment.adapter
     }
@@ -82,8 +87,8 @@ class ListStoryFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            ListStoryFragment()
+        fun newInstance(onItemClickListener: (String) -> Unit) =
+            ListStoryFragment(onItemClickListener)
 
         const val NO_STORY_FOUND = "no_story_found"
     }
