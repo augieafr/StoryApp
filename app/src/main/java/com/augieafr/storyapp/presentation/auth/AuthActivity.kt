@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
 import com.augieafr.storyapp.presentation.utils.Alert
@@ -80,30 +81,28 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.isError.observe(this) {
-            if (!it.isNullOrEmpty()) {
-                Alert.showAlert(
+        viewModel.authUIState.observe(this) { state ->
+            when (state) {
+                is ResultState.Error -> Alert.showAlert(
                     this,
                     AlertType.ERROR,
-                    it
+                    state.errorMessage
                 )
-            }
-        }
 
-        viewModel.isSuccessRegister.observe(this) {
-            Alert.showAlert(
-                this,
-                AlertType.SUCCESS,
-                getString(R.string.register_successfully),
-            ) {
-                changeScreenToLogin()
-            }
-        }
+                is ResultState.Loading -> binding.progressBar.setVisibility(state.isLoading)
 
-        viewModel.isLoading.observe(this) {
-            binding.progressBar.setVisibility(it)
+                is ResultState.Success ->
+                    Alert.showAlert(
+                        this,
+                        AlertType.SUCCESS,
+                        getString(R.string.register_successfully),
+                    ) {
+                        changeScreenToLogin()
+                    }
+            }
         }
     }
+
 
     private fun setButtonEnabled() = with(viewModel) {
         if (isLoginScreen) {
