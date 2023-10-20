@@ -23,4 +23,6 @@
     <string name="please_upload_your_photo">Tolong upload foto ceritamu</string>
     <string name="logout">Keluar</string>
     <string name="detail_story">Detail cerita</string>
+    <string name="nearby_stories">Cerita di dekatmu</string>
+    <string name="create_story">Buat cerita</string>
 </resources>

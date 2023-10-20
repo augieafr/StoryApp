@@ -12,9 +12,9 @@ import com.augieafr.storyapp.databinding.FragmentListStoryBinding
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
-import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
+import com.augieafr.storyapp.presentation.utils.setVisibility
 
-class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fragment() {
+class ListStoryFragment : Fragment() {
 
     private var _binding: FragmentListStoryBinding? = null
     private val binding get() = _binding!!
@@ -41,7 +41,7 @@ class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fra
     override fun onStop() {
         // somehow when using shared element transition, the progress bar visibility reset to visible
         // when navigate to another activity. So, I need to set the visibility to false when onStop is called
-        binding.progressBar.setLoadingVisibility(false)
+        binding.progressBar.setVisibility(false)
         super.onStop()
     }
 
@@ -58,7 +58,7 @@ class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fra
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.progressBar.setLoadingVisibility(it)
+            binding.progressBar.setVisibility(it)
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) {
@@ -74,10 +74,15 @@ class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fra
         }
     }
 
-    private fun initAdapter() = with(binding) {
-        adapter = ListStoryAdapter(onItemClickListener)
-        rvStory.layoutManager = LinearLayoutManager(requireContext())
-        rvStory.adapter = this@ListStoryFragment.adapter
+    private fun initAdapter() = with(binding.rvStory) {
+        this@ListStoryFragment.adapter = ListStoryAdapter(onItemClickListener)
+        layoutManager = LinearLayoutManager(requireContext())
+        adapter = this@ListStoryFragment.adapter
+        onScrollChangeListener?.let {
+            setOnScrollChangeListener { _, _, _, _, _ ->
+                it.invoke()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -86,9 +91,18 @@ class ListStoryFragment(private val onItemClickListener: (String) -> Unit) : Fra
     }
 
     companion object {
+        private lateinit var onItemClickListener: ((String) -> Unit)
+        private var onScrollChangeListener: ((() -> Unit))? = null
+
         @JvmStatic
-        fun newInstance(onItemClickListener: (String) -> Unit) =
-            ListStoryFragment(onItemClickListener)
+        fun newInstance(
+            onItemClickListener: (String) -> Unit,
+            onScrollChangeListener: ((() -> Unit))? = null
+        ) =
+            ListStoryFragment().apply {
+                this@Companion.onItemClickListener = onItemClickListener
+                this@Companion.onScrollChangeListener = onScrollChangeListener
+            }
 
         const val NO_STORY_FOUND = "no_story_found"
     }

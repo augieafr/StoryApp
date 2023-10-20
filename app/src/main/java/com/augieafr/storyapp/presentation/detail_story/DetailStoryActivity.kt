@@ -7,6 +7,7 @@ import com.augieafr.storyapp.databinding.ActivityDetailStoryBinding
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
+import com.augieafr.storyapp.presentation.utils.setVisibility
 import com.bumptech.glide.Glide
 
 class DetailStoryActivity : AppCompatActivity() {
@@ -35,8 +36,7 @@ class DetailStoryActivity : AppCompatActivity() {
 
     private fun initObserver() = with(viewModel) {
         isLoading.observe(this@DetailStoryActivity) {
-            binding.progressBar.visibility =
-                if (it) android.view.View.VISIBLE else android.view.View.GONE
+            binding.progressBar.setVisibility(it)
         }
 
         errorMessage.observe(this@DetailStoryActivity) {

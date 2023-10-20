@@ -23,12 +23,12 @@
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/baseline_logout_24"
         android:contentDescription="@string/logout"
-        app:layout_constraintVertical_bias="0.3"
+        android:src="@drawable/baseline_logout_24"
         app:layout_constraintBottom_toBottomOf="@id/imgLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/imgLogo"
+        app:layout_constraintVertical_bias="0.3"
         app:tint="?colorOnBackground" />
 
     <FrameLayout
@@ -42,15 +42,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imgLogo" />
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabCreateStory"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/create_story"
+        android:visibility="gone"
+        app:icon="@drawable/baseline_create_24"
+        app:iconSize="18dp"
+        app:layout_constraintBottom_toTopOf="@id/fabMoreAction"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabNearbyStory"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/nearby_stories"
+        app:icon="@drawable/baseline_location_on_24"
+        app:iconSize="18dp"
+        app:layout_constraintBottom_toTopOf="@id/fabCreateStory"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
+        android:id="@+id/fabMoreAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/add_story"
-        android:src="@drawable/baseline_add_24"
+        android:src="@drawable/baseline_keyboard_arrow_up_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

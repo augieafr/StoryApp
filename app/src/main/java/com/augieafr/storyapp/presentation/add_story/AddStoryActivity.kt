@@ -18,6 +18,7 @@ import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.getImageUri
+import com.augieafr.storyapp.presentation.utils.setVisibility
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.delay
@@ -58,11 +59,7 @@ class AddStoryActivity : AppCompatActivity() {
 
     private fun initObserver() = with(viewModel) {
         isLoading.observe(this@AddStoryActivity) {
-            binding.progressBar.visibility = if (it) {
-                android.view.View.VISIBLE
-            } else {
-                android.view.View.GONE
-            }
+            binding.progressBar.setVisibility(it)
         }
 
         errorMessage.observe(this@AddStoryActivity) {

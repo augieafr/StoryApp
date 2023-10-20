@@ -20,7 +20,7 @@ import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.AuthEditText
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
-import com.augieafr.storyapp.presentation.utils.setLoadingVisibility
+import com.augieafr.storyapp.presentation.utils.setVisibility
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
@@ -101,7 +101,7 @@ class AuthActivity : AppCompatActivity() {
         }
 
         viewModel.isLoading.observe(this) {
-            binding.progressBar.setLoadingVisibility(it)
+            binding.progressBar.setVisibility(it)
         }
     }
 

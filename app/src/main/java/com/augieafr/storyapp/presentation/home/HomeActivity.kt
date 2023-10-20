@@ -1,10 +1,14 @@
 package com.augieafr.storyapp.presentation.home
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +21,8 @@ import com.augieafr.storyapp.presentation.list_story.ListStoryFragment
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
+import com.augieafr.storyapp.presentation.utils.dpToPx
+import com.augieafr.storyapp.presentation.utils.setVisibility
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
@@ -47,12 +53,18 @@ class HomeActivity : AppCompatActivity() {
         initObserver()
     }
 
-    private fun initObserver() = lifecycleScope.launch {
-        viewModel.userToken.collect {
-            if (it.isEmpty()) {
-                startActivity(Intent(this@HomeActivity, AuthActivity::class.java))
-                finish()
+    private fun initObserver() {
+        lifecycleScope.launch {
+            viewModel.userToken.collect {
+                if (it.isEmpty()) {
+                    startActivity(Intent(this@HomeActivity, AuthActivity::class.java))
+                    finish()
+                }
             }
+        }
+
+        viewModel.isFabExpanded.observe(this@HomeActivity) { isFabExpanded ->
+            animateFab(isFabExpanded)
         }
     }
 
@@ -60,19 +72,97 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             add(
                 fragmentContainer.id, ListStoryFragment.newInstance(
-                    ::goToDetailActivity
+                    ::goToDetailActivity,
+                    ::onListStoryScrollEvent
                 )
             )
+            addToBackStack(null)
         }
 
-        fabAdd.setOnClickListener {
+        fabMoreAction.apply {
+            setOnClickListener {
+                viewModel.changeFabState()
+            }
+        }
+
+        fabCreateStory.setOnClickListener {
+            viewModel.changeFabState()
             launchAddStory.launch(Intent(this@HomeActivity, AddStoryActivity::class.java))
+        }
+
+        fabNearbyStory.setOnClickListener {
+            viewModel.changeFabState()
+            // TODO goToMapActivity
         }
 
         imgLogout.setOnClickListener {
             lifecycleScope.launch {
                 viewModel.logout()
             }
+        }
+    }
+
+    private fun onListStoryScrollEvent() = with(viewModel) {
+        if (isFabExpanded.value == true) viewModel.changeFabState()
+    }
+
+    private fun animateFab(isExpanded: Boolean) = with(binding) {
+        val firstViewToAnimate: ObjectAnimator
+        val secondViewToAnimate: ObjectAnimator
+        val animationDuration = 100L
+        val fabMoreActionIcon: Int
+        val onFirstAnimationEnd: () -> Unit
+        var onSecondAnimationEnd: (() -> Unit)? = null
+
+        if (isExpanded) {
+            fabMoreActionIcon = R.drawable.baseline_keyboard_arrow_down_24
+            fabCreateStory.setVisibility(true)
+            onFirstAnimationEnd = {
+                fabNearbyStory.setVisibility(true)
+            }
+
+            firstViewToAnimate =
+                ObjectAnimator.ofFloat(fabCreateStory, View.TRANSLATION_Y, 8.dpToPx(), 0f).apply {
+                    duration = animationDuration
+                }
+
+            secondViewToAnimate =
+                ObjectAnimator.ofFloat(fabNearbyStory, View.TRANSLATION_Y, 8.dpToPx(), 0f).apply {
+                    duration = animationDuration
+                }
+        } else {
+            fabMoreActionIcon = R.drawable.baseline_keyboard_arrow_up_24
+            onFirstAnimationEnd = {
+                fabNearbyStory.setVisibility(false)
+            }
+
+            onSecondAnimationEnd = {
+                fabCreateStory.setVisibility(false)
+            }
+
+            firstViewToAnimate =
+                ObjectAnimator.ofFloat(fabNearbyStory, View.TRANSLATION_Y, 0f, 8.dpToPx()).apply {
+                    duration = animationDuration
+                }
+
+            secondViewToAnimate =
+                ObjectAnimator.ofFloat(fabCreateStory, View.TRANSLATION_Y, 0f, 8.dpToPx()).apply {
+                    duration = animationDuration
+                }
+        }
+
+        AnimatorSet().apply {
+            playSequentially(firstViewToAnimate, secondViewToAnimate)
+            firstViewToAnimate.doOnEnd {
+                onFirstAnimationEnd.invoke()
+            }
+            secondViewToAnimate.doOnEnd {
+                onSecondAnimationEnd?.invoke()
+            }
+            doOnEnd {
+                fabMoreAction.setImageResource(fabMoreActionIcon)
+            }
+            start()
         }
     }
 
