@@ -1,0 +1,58 @@
+package com.augieafr.storyapp.data.repository
+
+import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.remote.ApiService
+import com.augieafr.storyapp.data.utils.RepositoryWithToken
+import com.augieafr.storyapp.data.utils.ResultState
+import com.augieafr.storyapp.data.utils.toErrorResponse
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+
+class StoryRepository(
+    private val apiService: ApiService,
+    userPreference: UserPreference
+) : RepositoryWithToken(userPreference) {
+    fun getStories() = executeRequest { flowCollector, token ->
+        val result = apiService.getStories(token, 1, 10)
+        flowCollector.emit(ResultState.Loading(false))
+        if (result.isSuccessful) {
+            val resultData = result.body()?.listStory ?: emptyList()
+            flowCollector.emit(ResultState.Success(resultData))
+        } else {
+            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+        }
+    }
+
+    fun getDetailStories(id: String) = executeRequest { flowCollector, token ->
+        val result = apiService.getDetailStory(token, id)
+        flowCollector.emit(ResultState.Loading(false))
+        if (result.isSuccessful) {
+            result.body()?.story?.let {
+                flowCollector.emit(ResultState.Success(it))
+            } ?: run {
+                flowCollector.emit(ResultState.Error(""))
+            }
+        } else {
+            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+        }
+    }
+
+    fun addStory(imageFile: File, description: String) = executeRequest { flowCollector, token ->
+        val requestBody = description.toRequestBody("text/plain".toMediaType())
+        val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
+        val multipartBody = MultipartBody.Part.createFormData(
+            "photo",
+            imageFile.name,
+            requestImageFile
+        )
+        val result = apiService.createStory(token, multipartBody, requestBody)
+        if (result.isSuccessful) {
+            flowCollector.emit(ResultState.Success(true))
+        } else {
+            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+        }
+    }
+}

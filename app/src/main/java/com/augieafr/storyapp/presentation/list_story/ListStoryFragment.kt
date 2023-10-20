@@ -6,13 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.FragmentListStoryBinding
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setVisibility
+import kotlinx.coroutines.launch
 
 class ListStoryFragment : Fragment() {
 
@@ -33,11 +38,6 @@ class ListStoryFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getAllStory()
-    }
-
     override fun onStop() {
         // somehow when using shared element transition, the progress bar visibility reset to visible
         // when navigate to another activity. So, I need to set the visibility to false when onStop is called
@@ -53,24 +53,34 @@ class ListStoryFragment : Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.listStory.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getAllStory().collect {
+                    when (it) {
+                        is ResultState.Loading -> {
+                            binding.progressBar.setVisibility(it.isLoading)
+                        }
 
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            binding.progressBar.setVisibility(it)
-        }
+                        is ResultState.Success -> {
+                            adapter.submitList(it.data)
+                        }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) {
-            if (it == NO_STORY_FOUND) {
-                Alert.showAlert(
-                    requireContext(),
-                    AlertType.ERROR,
-                    getString(R.string.no_story_found)
-                )
-                return@observe
+                        is ResultState.Error -> {
+                            if (it.errorMessage == NO_STORY_FOUND) {
+                                Alert.showAlert(
+                                    requireContext(),
+                                    AlertType.ERROR,
+                                    getString(R.string.no_story_found)
+                                )
+                            } else Alert.showAlert(
+                                requireContext(),
+                                AlertType.ERROR,
+                                it.errorMessage
+                            )
+                        }
+                    }
+                }
             }
-            Alert.showAlert(requireContext(), AlertType.ERROR, it)
         }
     }
 

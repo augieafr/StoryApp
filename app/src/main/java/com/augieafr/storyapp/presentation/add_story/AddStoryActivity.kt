@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.utils.ResultState
+import com.augieafr.storyapp.data.utils.uriToFile
 import com.augieafr.storyapp.databinding.ActivityAddStoryBinding
 import com.augieafr.storyapp.databinding.BottomSheetDialogImagePickerBinding
 import com.augieafr.storyapp.presentation.utils.Alert
@@ -53,28 +55,6 @@ class AddStoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initUi()
-        initObserver()
-    }
-
-    private fun initObserver() = with(viewModel) {
-        isLoading.observe(this@AddStoryActivity) {
-            binding.progressBar.setVisibility(it)
-        }
-
-        errorMessage.observe(this@AddStoryActivity) {
-            Alert.showAlert(
-                this@AddStoryActivity,
-                AlertType.ERROR,
-                it
-            )
-        }
-
-        isSuccessUpload.observe(this@AddStoryActivity) {
-            if (it) {
-                setResult(RESULT_SUCCESS_UPLOAD_STORY)
-                finish()
-            }
-        }
     }
 
     override fun onResume() {
@@ -113,7 +93,7 @@ class AddStoryActivity : AppCompatActivity() {
                     }
                 }
                 storyImageUri?.let {
-                    uploadStory(it, edtDescription.text.toString(), this@AddStoryActivity)
+                    createStory(it, edtDescription.text.toString())
                 } ?: run {
                     Alert.showAlert(
                         this@AddStoryActivity,
@@ -131,6 +111,28 @@ class AddStoryActivity : AppCompatActivity() {
                 edtDescription.error = getString(R.string.field_must_not_be_empty)
             }
         })
+    }
+
+    private fun createStory(uri: Uri, description: String) {
+        lifecycleScope.launch {
+            viewModel.uploadStory(uriToFile(uri, this@AddStoryActivity), description)
+                .collect { state ->
+                    when (state) {
+                        is ResultState.Error -> Alert.showAlert(
+                            this@AddStoryActivity,
+                            AlertType.ERROR,
+                            state.errorMessage
+                        )
+
+                        is ResultState.Loading -> binding.progressBar.setVisibility((state.isLoading))
+
+                        is ResultState.Success -> if (state.data) {
+                            setResult(RESULT_SUCCESS_UPLOAD_STORY)
+                            finish()
+                        }
+                    }
+                }
+        }
     }
 
     private fun showImagePickerDialog() {
