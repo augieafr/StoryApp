@@ -70,7 +70,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initUi() = with(binding) {
         supportFragmentManager.commit {
-            add(
+            replace(
                 fragmentContainer.id, ListStoryFragment.newInstance(
                     ::goToDetailActivity,
                     ::onListStoryScrollEvent
