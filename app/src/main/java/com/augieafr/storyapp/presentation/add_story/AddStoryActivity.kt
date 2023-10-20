@@ -43,9 +43,8 @@ class AddStoryActivity : AppCompatActivity() {
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { isSuccess ->
-        if (isSuccess) {
-            setStoryImage()
-        }
+        if (isSuccess) setStoryImage()
+        else viewModel.storyImageUri = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

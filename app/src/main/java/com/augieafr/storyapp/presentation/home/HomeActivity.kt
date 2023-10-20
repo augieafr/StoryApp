@@ -76,7 +76,6 @@ class HomeActivity : AppCompatActivity() {
                     ::onListStoryScrollEvent
                 )
             )
-            addToBackStack(null)
         }
 
         fabMoreAction.apply {

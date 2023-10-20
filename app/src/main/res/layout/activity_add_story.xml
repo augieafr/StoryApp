@@ -47,7 +47,7 @@
         </com.google.android.material.appbar.MaterialToolbar>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvPhoto"
+            android:id="@+id/civPhoto"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="16dp"
@@ -79,7 +79,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cvPhoto">
+            app:layout_constraintTop_toBottomOf="@id/civPhoto">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDescription"
