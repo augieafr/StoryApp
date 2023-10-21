@@ -1,8 +1,8 @@
 package com.augieafr.storyapp.presentation.list_story
 
 import androidx.recyclerview.widget.RecyclerView
-import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.databinding.ItemStoryBinding
+import com.augieafr.storyapp.presentation.model.StoryUIModel
 import com.bumptech.glide.Glide
 
 class ListStoryViewHolder(
@@ -11,16 +11,16 @@ class ListStoryViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(story: ListStoryItem) = with(binding) {
+    fun bind(story: StoryUIModel) = with(binding) {
         tvDescription.text = story.description
-        tvName.text = story.name
+        tvName.text = story.userName
 
         Glide.with(binding.root)
             .load(story.photoUrl)
             .into(imgName)
 
         root.setOnClickListener {
-            onItemClickListener(story.id.orEmpty())
+            onItemClickListener(story.id)
         }
     }
 }

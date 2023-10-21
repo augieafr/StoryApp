@@ -4,17 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.databinding.ItemStoryBinding
+import com.augieafr.storyapp.presentation.model.StoryUIModel
 
 class ListStoryAdapter(private val onItemClickListener: (String) -> Unit) :
-    PagingDataAdapter<ListStoryItem, ListStoryViewHolder>(
-        object : DiffUtil.ItemCallback<ListStoryItem>() {
-            override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem) =
+    PagingDataAdapter<StoryUIModel, ListStoryViewHolder>(
+        object : DiffUtil.ItemCallback<StoryUIModel>() {
+            override fun areItemsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
                 oldItem.id == newItem.id
 
 
-            override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem) =
+            override fun areContentsTheSame(oldItem: StoryUIModel, newItem: StoryUIModel) =
                 oldItem == newItem
 
         }

@@ -1,16 +1,21 @@
 package com.augieafr.storyapp.data.repository
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.map
 import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.model.response.ListStoryItem
-import com.augieafr.storyapp.data.paging.StoryPagingSource
+import com.augieafr.storyapp.data.local.room.StoryDatabase
+import com.augieafr.storyapp.data.paging.StoryRemoteMediator
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.RepositoryWithToken
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.data.utils.toErrorResponse
+import com.augieafr.storyapp.data.utils.toStoryUIModel
+import com.augieafr.storyapp.presentation.model.StoryUIModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -19,20 +24,27 @@ import java.io.File
 
 class StoryRepository(
     private val apiService: ApiService,
+    private val database: StoryDatabase,
     userPreference: UserPreference
 ) : RepositoryWithToken(userPreference) {
 
-    suspend fun getPagingStories(): Flow<PagingData<ListStoryItem>> {
-        val token = super.getUserToken()
+    @OptIn(ExperimentalPagingApi::class)
+    suspend fun getStories(): Flow<PagingData<StoryUIModel>> {
+        val token = getUserToken()
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
                 enablePlaceholders = false
             ),
+            remoteMediator = StoryRemoteMediator(apiService, database, token),
             pagingSourceFactory = {
-                StoryPagingSource(apiService, token)
+                database.storyDao().getStories()
             }
-        ).flow
+        ).flow.map {
+            it.map { storyEntity ->
+                storyEntity.toStoryUIModel()
+            }
+        }
     }
 
     fun getDetailStories(id: String) = executeRequest { flowCollector, token ->
