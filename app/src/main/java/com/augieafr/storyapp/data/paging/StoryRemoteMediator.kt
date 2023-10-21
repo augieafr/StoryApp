@@ -6,6 +6,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.augieafr.storyapp.data.exceptions.NoDataException
 import com.augieafr.storyapp.data.local.room.StoryDatabase
 import com.augieafr.storyapp.data.model.entity.RemoteKeys
 import com.augieafr.storyapp.data.model.entity.StoryEntity
@@ -58,6 +59,9 @@ class StoryRemoteMediator(
             if (responseData.isSuccessful) {
                 val data = responseData.body()?.listStory.orEmpty()
                 val endOfPaginationReached = data.isEmpty()
+                if (page == 1 && endOfPaginationReached) {
+                    throw NoDataException()
+                }
                 storyDatabase.withTransaction {
                     if (loadType == LoadType.REFRESH) {
                         storyDatabase.remoteKeysDao().deleteRemoteKeys()

@@ -30,4 +30,5 @@
     <string name="nearby_stories">Nearby stories</string>
     <string name="create_story">Create story</string>
     <string name="retry">Retry</string>
+    <string name="something_wrong">Something went wrong, try again later</string>
 </resources>

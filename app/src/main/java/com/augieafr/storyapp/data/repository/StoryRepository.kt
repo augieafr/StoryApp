@@ -14,7 +14,9 @@ import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.data.utils.toErrorResponse
 import com.augieafr.storyapp.data.utils.toStoryUIModel
 import com.augieafr.storyapp.presentation.model.StoryUIModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -44,7 +46,7 @@ class StoryRepository(
             it.map { storyEntity ->
                 storyEntity.toStoryUIModel()
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     fun getDetailStories(id: String) = executeRequest { flowCollector, token ->

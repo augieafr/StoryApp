@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.take
 
-abstract class RepositoryWithToken(val userPreference: UserPreference) {
+abstract class RepositoryWithToken(private val userPreference: UserPreference) {
     suspend fun getUserToken() = userPreference.getUserToken().take(1).single()
     protected inline fun <T> executeRequest(
         crossinline action: suspend (FlowCollector<ResultState<T>>, String) -> Unit
