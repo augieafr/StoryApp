@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.augieafr.storyapp.data.model.Story
+import com.augieafr.storyapp.data.model.response.Story
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.ActivityDetailStoryBinding
 import com.augieafr.storyapp.presentation.utils.Alert

@@ -1,11 +1,11 @@
 package com.augieafr.storyapp.data.remote
 
-import com.augieafr.storyapp.data.model.DetailResponse
-import com.augieafr.storyapp.data.model.ErrorResponse
-import com.augieafr.storyapp.data.model.ListStoryResponse
-import com.augieafr.storyapp.data.model.LoginPayload
-import com.augieafr.storyapp.data.model.LoginResponse
-import com.augieafr.storyapp.data.model.RegisterPayload
+import com.augieafr.storyapp.data.model.payload.LoginPayload
+import com.augieafr.storyapp.data.model.payload.RegisterPayload
+import com.augieafr.storyapp.data.model.response.DetailResponse
+import com.augieafr.storyapp.data.model.response.ErrorResponse
+import com.augieafr.storyapp.data.model.response.ListStoryResponse
+import com.augieafr.storyapp.data.model.response.LoginResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response

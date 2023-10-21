@@ -1,7 +1,7 @@
 package com.augieafr.storyapp.presentation.list_story
 
 import androidx.recyclerview.widget.RecyclerView
-import com.augieafr.storyapp.data.model.ListStoryItem
+import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.databinding.ItemStoryBinding
 import com.bumptech.glide.Glide
 

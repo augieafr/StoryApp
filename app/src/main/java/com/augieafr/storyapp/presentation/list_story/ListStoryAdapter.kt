@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.augieafr.storyapp.data.model.ListStoryItem
+import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.databinding.ItemStoryBinding
 
 class ListStoryAdapter(private val onItemClickListener: (String) -> Unit) :

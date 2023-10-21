@@ -1,8 +1,8 @@
 package com.augieafr.storyapp.data.repository
 
 import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.model.LoginPayload
-import com.augieafr.storyapp.data.model.RegisterPayload
+import com.augieafr.storyapp.data.model.payload.LoginPayload
+import com.augieafr.storyapp.data.model.payload.RegisterPayload
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.data.utils.toErrorResponse

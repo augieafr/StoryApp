@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.augieafr.storyapp.data.local.preferences.UserPreference
-import com.augieafr.storyapp.data.model.ListStoryItem
+import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.data.paging.StoryPagingSource
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.RepositoryWithToken

@@ -2,7 +2,7 @@ package com.augieafr.storyapp.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.augieafr.storyapp.data.model.ListStoryItem
+import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.toErrorResponse
 

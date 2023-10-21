@@ -1,4 +1,4 @@
-package com.augieafr.storyapp.data.model
+package com.augieafr.storyapp.data.model.response
 
 import com.google.gson.annotations.SerializedName
 

@@ -2,7 +2,7 @@ package com.augieafr.storyapp.data.utils
 
 import android.content.Context
 import android.net.Uri
-import com.augieafr.storyapp.data.model.ErrorResponse
+import com.augieafr.storyapp.data.model.response.ErrorResponse
 import com.google.gson.Gson
 import retrofit2.Response
 import java.io.File
