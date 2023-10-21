@@ -25,4 +25,5 @@
     <string name="detail_story">Detail cerita</string>
     <string name="nearby_stories">Cerita di dekatmu</string>
     <string name="create_story">Buat cerita</string>
+    <string name="retry">Coba lagi</string>
 </resources>

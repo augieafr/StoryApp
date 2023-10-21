@@ -1,10 +1,16 @@
 package com.augieafr.storyapp.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.augieafr.storyapp.data.local.preferences.UserPreference
+import com.augieafr.storyapp.data.model.ListStoryItem
+import com.augieafr.storyapp.data.paging.StoryPagingSource
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.RepositoryWithToken
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.data.utils.toErrorResponse
+import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -15,15 +21,18 @@ class StoryRepository(
     private val apiService: ApiService,
     userPreference: UserPreference
 ) : RepositoryWithToken(userPreference) {
-    fun getStories() = executeRequest { flowCollector, token ->
-        val result = apiService.getStories(token, 1, 10)
-        flowCollector.emit(ResultState.Loading(false))
-        if (result.isSuccessful) {
-            val resultData = result.body()?.listStory ?: emptyList()
-            flowCollector.emit(ResultState.Success(resultData))
-        } else {
-            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
-        }
+
+    suspend fun getPagingStories(): Flow<PagingData<ListStoryItem>> {
+        val token = super.getUserToken()
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                StoryPagingSource(apiService, token)
+            }
+        ).flow
     }
 
     fun getDetailStories(id: String) = executeRequest { flowCollector, token ->

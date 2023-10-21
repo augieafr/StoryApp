@@ -63,6 +63,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.paging:paging-runtime:3.2.1")
+    implementation("androidx.room:room-paging:2.4.0-rc01")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

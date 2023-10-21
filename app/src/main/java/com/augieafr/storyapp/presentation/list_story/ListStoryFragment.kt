@@ -10,11 +10,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.augieafr.storyapp.R
-import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.FragmentListStoryBinding
-import com.augieafr.storyapp.presentation.utils.Alert
-import com.augieafr.storyapp.presentation.utils.AlertType
+import com.augieafr.storyapp.presentation.utils.PagingFooterLoadingStateAdapter
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setVisibility
 import kotlinx.coroutines.launch
@@ -28,7 +25,7 @@ class ListStoryFragment : Fragment() {
         ViewModelProvider(requireContext())
     }
 
-    private lateinit var adapter: ListStoryAdapter
+    private lateinit var pagingAdapter: ListStoryAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,38 +53,21 @@ class ListStoryFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.getAllStory().collect {
-                    when (it) {
-                        is ResultState.Loading -> {
-                            binding.progressBar.setVisibility(it.isLoading)
-                        }
-
-                        is ResultState.Success -> {
-                            adapter.submitList(it.data)
-                        }
-
-                        is ResultState.Error -> {
-                            if (it.errorMessage == NO_STORY_FOUND) {
-                                Alert.showAlert(
-                                    requireContext(),
-                                    AlertType.ERROR,
-                                    getString(R.string.no_story_found)
-                                )
-                            } else Alert.showAlert(
-                                requireContext(),
-                                AlertType.ERROR,
-                                it.errorMessage
-                            )
-                        }
-                    }
+                    pagingAdapter.submitData(lifecycle, it)
                 }
             }
         }
     }
 
     private fun initAdapter() = with(binding.rvStory) {
-        this@ListStoryFragment.adapter = ListStoryAdapter(onItemClickListener)
+        pagingAdapter = ListStoryAdapter(onItemClickListener)
         layoutManager = LinearLayoutManager(requireContext())
-        adapter = this@ListStoryFragment.adapter
+        adapter =
+            pagingAdapter.withLoadStateFooter(footer = PagingFooterLoadingStateAdapter {
+                lifecycleScope.launch {
+                    pagingAdapter.retry()
+                }
+            })
         onScrollChangeListener?.let {
             setOnScrollChangeListener { _, _, _, _, _ ->
                 it.invoke()
@@ -113,8 +93,6 @@ class ListStoryFragment : Fragment() {
                 this@Companion.onItemClickListener = onItemClickListener
                 this@Companion.onScrollChangeListener = onScrollChangeListener
             }
-
-        const val NO_STORY_FOUND = "no_story_found"
     }
 
 }
