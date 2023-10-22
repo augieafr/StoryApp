@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.augieafr.storyapp.R
+import com.augieafr.storyapp.data.utils.EspressoIdlingResource
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.ActivityAuthBinding
 import com.augieafr.storyapp.presentation.home.HomeActivity
@@ -67,6 +68,7 @@ class AuthActivity : AppCompatActivity() {
                             AlertType.SUCCESS,
                             getString(R.string.login_successfully),
                         ) {
+                            EspressoIdlingResource.decrement()
                             goToHomeScreen()
                         }
                     }

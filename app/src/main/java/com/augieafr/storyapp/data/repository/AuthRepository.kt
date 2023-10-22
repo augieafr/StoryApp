@@ -4,6 +4,7 @@ import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.model.payload.LoginPayload
 import com.augieafr.storyapp.data.model.payload.RegisterPayload
 import com.augieafr.storyapp.data.remote.ApiService
+import com.augieafr.storyapp.data.utils.EspressoIdlingResource
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.data.utils.getException
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,7 @@ class AuthRepository(
         crossinline action: suspend (FlowCollector<ResultState<T>>) -> Unit
     ) =
         flow {
+            EspressoIdlingResource.increment()
             emit(ResultState.Loading(true))
             action(this)
         }.catch {
