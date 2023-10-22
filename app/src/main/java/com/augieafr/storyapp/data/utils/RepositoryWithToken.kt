@@ -19,6 +19,6 @@ abstract class RepositoryWithToken(private val userPreference: UserPreference) {
             action(this, getUserToken())
         }.catch {
             emit(ResultState.Loading(false))
-            emit(ResultState.Error(it.message.orEmpty()))
+            emit(ResultState.Error(it))
         }.flowOn(Dispatchers.IO)
 }

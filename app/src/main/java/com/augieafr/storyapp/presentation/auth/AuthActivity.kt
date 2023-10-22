@@ -22,6 +22,7 @@ import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.AuthEditText
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setVisibility
+import com.augieafr.storyapp.presentation.utils.showErrorAlert
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 
@@ -83,11 +84,7 @@ class AuthActivity : AppCompatActivity() {
 
         viewModel.authUIState.observe(this) { state ->
             when (state) {
-                is ResultState.Error -> Alert.showAlert(
-                    this,
-                    AlertType.ERROR,
-                    state.errorMessage
-                )
+                is ResultState.Error -> state.throwable.showErrorAlert(this@AuthActivity)
 
                 is ResultState.Loading -> binding.progressBar.setVisibility(state.isLoading)
 

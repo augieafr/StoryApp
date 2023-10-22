@@ -11,14 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.augieafr.storyapp.R
-import com.augieafr.storyapp.data.exceptions.NoDataException
 import com.augieafr.storyapp.databinding.FragmentListStoryBinding
-import com.augieafr.storyapp.presentation.utils.Alert
-import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.PagingFooterLoadingStateAdapter
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setVisibility
+import com.augieafr.storyapp.presentation.utils.showErrorAlert
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ListStoryFragment : Fragment() {
@@ -57,7 +55,7 @@ class ListStoryFragment : Fragment() {
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getAllStory().collect {
+                viewModel.getAllStory().collectLatest {
                     pagingAdapter.submitData(lifecycle, it)
                 }
             }
@@ -88,21 +86,8 @@ class ListStoryFragment : Fragment() {
             when (val refreshState = it.refresh) {
                 is LoadState.Error -> {
                     progressBar.setVisibility(false)
-                    if (refreshState.error is NoDataException) {
-                        Alert.showAlert(
-                            requireContext(),
-                            AlertType.ERROR,
-                            getString(R.string.no_story_found)
-                        )
-                    } else {
-                        Alert.showAlert(
-                            requireContext(),
-                            AlertType.ERROR,
-                            refreshState.error.message ?: getString(R.string.something_wrong)
-                        )
-                    }
+                    refreshState.error.showErrorAlert(requireContext())
                 }
-
                 LoadState.Loading -> progressBar.setVisibility(true)
                 is LoadState.NotLoading -> progressBar.setVisibility(false)
             }

@@ -7,10 +7,9 @@ import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.data.model.response.Story
 import com.augieafr.storyapp.data.utils.ResultState
 import com.augieafr.storyapp.databinding.ActivityDetailStoryBinding
-import com.augieafr.storyapp.presentation.utils.Alert
-import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.setVisibility
+import com.augieafr.storyapp.presentation.utils.showErrorAlert
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 
@@ -57,7 +56,7 @@ class DetailStoryActivity : AppCompatActivity() {
             }
 
             is ResultState.Error -> {
-                Alert.showAlert(this@DetailStoryActivity, AlertType.ERROR, state.errorMessage)
+                state.throwable.showErrorAlert(this@DetailStoryActivity)
             }
         }
     }

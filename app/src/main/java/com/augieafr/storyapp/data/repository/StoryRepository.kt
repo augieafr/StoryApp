@@ -5,13 +5,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.augieafr.storyapp.data.exceptions.NoDataException
 import com.augieafr.storyapp.data.local.preferences.UserPreference
 import com.augieafr.storyapp.data.local.room.StoryDatabase
 import com.augieafr.storyapp.data.paging.StoryRemoteMediator
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.RepositoryWithToken
 import com.augieafr.storyapp.data.utils.ResultState
-import com.augieafr.storyapp.data.utils.toErrorResponse
+import com.augieafr.storyapp.data.utils.getException
 import com.augieafr.storyapp.data.utils.toStoryUIModel
 import com.augieafr.storyapp.presentation.model.StoryUIModel
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ class StoryRepository(
 ) : RepositoryWithToken(userPreference) {
 
     @OptIn(ExperimentalPagingApi::class)
-    suspend fun getStories(): Flow<PagingData<StoryUIModel>> {
+    suspend fun getPagingStories(): Flow<PagingData<StoryUIModel>> {
         val token = getUserToken()
         return Pager(
             config = PagingConfig(
@@ -56,10 +57,10 @@ class StoryRepository(
             result.body()?.story?.let {
                 flowCollector.emit(ResultState.Success(it))
             } ?: run {
-                flowCollector.emit(ResultState.Error(""))
+                flowCollector.emit(ResultState.Error(NoDataException()))
             }
         } else {
-            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+            flowCollector.emit(ResultState.Error(result.getException()))
         }
     }
 
@@ -75,7 +76,7 @@ class StoryRepository(
         if (result.isSuccessful) {
             flowCollector.emit(ResultState.Success(true))
         } else {
-            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+            flowCollector.emit(ResultState.Error(result.getException()))
         }
     }
 }

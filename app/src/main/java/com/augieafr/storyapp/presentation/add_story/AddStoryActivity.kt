@@ -21,6 +21,7 @@ import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.getImageUri
 import com.augieafr.storyapp.presentation.utils.setVisibility
+import com.augieafr.storyapp.presentation.utils.showErrorAlert
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.delay
@@ -118,11 +119,7 @@ class AddStoryActivity : AppCompatActivity() {
             viewModel.uploadStory(uriToFile(uri, this@AddStoryActivity), description)
                 .collect { state ->
                     when (state) {
-                        is ResultState.Error -> Alert.showAlert(
-                            this@AddStoryActivity,
-                            AlertType.ERROR,
-                            state.errorMessage
-                        )
+                        is ResultState.Error -> state.throwable.showErrorAlert(this@AddStoryActivity)
 
                         is ResultState.Loading -> binding.progressBar.setVisibility((state.isLoading))
 

@@ -11,7 +11,7 @@ import com.augieafr.storyapp.data.local.room.StoryDatabase
 import com.augieafr.storyapp.data.model.entity.RemoteKeys
 import com.augieafr.storyapp.data.model.entity.StoryEntity
 import com.augieafr.storyapp.data.remote.ApiService
-import com.augieafr.storyapp.data.utils.toErrorResponse
+import com.augieafr.storyapp.data.utils.getException
 import com.augieafr.storyapp.data.utils.toStoryEntity
 
 @OptIn(ExperimentalPagingApi::class)
@@ -76,7 +76,7 @@ class StoryRemoteMediator(
                     storyDatabase.storyDao().insertStories(data.map { it.toStoryEntity() })
                 }
                 MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-            } else MediatorResult.Error(Exception(responseData.toErrorResponse().message))
+            } else MediatorResult.Error(responseData.getException())
         } catch (exception: Exception) {
             Log.e(this::class.simpleName, exception.message.toString())
             MediatorResult.Error(exception)

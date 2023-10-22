@@ -1,8 +1,11 @@
 package com.augieafr.storyapp.data.utils
 
 import com.augieafr.storyapp.data.model.entity.StoryEntity
+import com.augieafr.storyapp.data.model.response.ErrorResponse
 import com.augieafr.storyapp.data.model.response.ListStoryItem
 import com.augieafr.storyapp.presentation.model.StoryUIModel
+import com.google.gson.Gson
+import retrofit2.Response
 
 fun ListStoryItem.toStoryEntity() = StoryEntity(
     id = id,
@@ -21,3 +24,8 @@ fun StoryEntity.toStoryUIModel() = StoryUIModel(
     lat = lat,
     lon = lon,
 )
+
+fun <T> Response<T>.getException(): Exception {
+    val errorResponse = Gson().fromJson(errorBody()?.string(), ErrorResponse::class.java)
+    return Exception(errorResponse.message)
+}

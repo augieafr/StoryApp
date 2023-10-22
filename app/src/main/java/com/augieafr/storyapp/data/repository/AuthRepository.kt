@@ -5,7 +5,7 @@ import com.augieafr.storyapp.data.model.payload.LoginPayload
 import com.augieafr.storyapp.data.model.payload.RegisterPayload
 import com.augieafr.storyapp.data.remote.ApiService
 import com.augieafr.storyapp.data.utils.ResultState
-import com.augieafr.storyapp.data.utils.toErrorResponse
+import com.augieafr.storyapp.data.utils.getException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.catch
@@ -27,7 +27,7 @@ class AuthRepository(
                 userPreference.setUserToken("Bearer " + it.loginResult.token)
             }
         } else {
-            flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+            flowCollector.emit(ResultState.Error(result.getException()))
         }
     }
 
@@ -40,7 +40,7 @@ class AuthRepository(
                     flowCollector.emit(ResultState.Success(true))
                 }
             } else {
-                flowCollector.emit(ResultState.Error(result.toErrorResponse().message))
+                flowCollector.emit(ResultState.Error(result.getException()))
             }
         }
 
@@ -52,6 +52,6 @@ class AuthRepository(
             action(this)
         }.catch {
             emit(ResultState.Loading(false))
-            emit(ResultState.Error(it.message.orEmpty()))
+            emit(ResultState.Error(it))
         }.flowOn(Dispatchers.IO)
 }

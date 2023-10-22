@@ -9,5 +9,5 @@ class ListStoryViewModel(
     private val repository: StoryRepository
 ) : ViewModel() {
     suspend fun getAllStory() =
-        repository.getStories().cachedIn(viewModelScope)
+        repository.getPagingStories().cachedIn(viewModelScope)
 }
