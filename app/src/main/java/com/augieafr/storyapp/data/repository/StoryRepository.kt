@@ -80,19 +80,26 @@ class StoryRepository(
         }
     }
 
-    fun addStory(imageFile: File, description: String) = executeRequest { flowCollector, token ->
-        val requestBody = description.toRequestBody("text/plain".toMediaType())
-        val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
-        val multipartBody = MultipartBody.Part.createFormData(
-            "photo",
-            imageFile.name,
-            requestImageFile
-        )
-        val result = apiService.createStory(token, multipartBody, requestBody)
-        if (result.isSuccessful) {
-            flowCollector.emit(ResultState.Success(true))
-        } else {
-            flowCollector.emit(ResultState.Error(result.getException()))
+    fun addStory(imageFile: File, description: String, lat: Double?, lon: Double?) =
+        executeRequest { flowCollector, token ->
+            val descriptionRequestBody = description.toRequestBody("text/plain".toMediaType())
+            val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
+            val multipartFile = MultipartBody.Part.createFormData(
+                "photo",
+                imageFile.name,
+                requestImageFile
+            )
+            val result = apiService.createStory(
+                token,
+                multipartFile,
+                descriptionRequestBody,
+                lat?.toFloat(),
+                lon?.toFloat()
+            )
+            if (result.isSuccessful) {
+                flowCollector.emit(ResultState.Success(true))
+            } else {
+                flowCollector.emit(ResultState.Error(result.getException()))
+            }
         }
-    }
 }

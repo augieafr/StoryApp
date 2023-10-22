@@ -32,4 +32,7 @@
     <string name="retry">Retry</string>
     <string name="something_wrong">Something went wrong, try again later</string>
     <string name="title_activity_nearby_story" translatable="false">NearbyStoryActivity</string>
+    <string name="share_my_location">Share my location?</string>
+    <string name="location_not_found">Cannot find your location, please try again later.</string>
+    <string name="location_permission_denied">To use this feature, please grant location access.</string>
 </resources>

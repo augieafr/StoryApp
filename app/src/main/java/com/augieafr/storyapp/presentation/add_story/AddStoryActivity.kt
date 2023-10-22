@@ -1,5 +1,7 @@
 package com.augieafr.storyapp.presentation.add_story
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -9,6 +11,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import com.augieafr.storyapp.R
@@ -22,6 +25,8 @@ import com.augieafr.storyapp.presentation.utils.ViewModelProvider
 import com.augieafr.storyapp.presentation.utils.getImageUri
 import com.augieafr.storyapp.presentation.utils.setVisibility
 import com.augieafr.storyapp.presentation.utils.showErrorAlert
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.delay
@@ -30,6 +35,7 @@ import kotlinx.coroutines.launch
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel by viewModels<AddStoryViewModel> {
         ViewModelProvider(this)
     }
@@ -54,13 +60,21 @@ class AddStoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         initUi()
+        initObserver()
     }
 
-    override fun onResume() {
-        super.onResume()
-        setStoryImage()
+    private fun initObserver() = with(viewModel) {
+        isShareLocationChecked.observe(this@AddStoryActivity) {
+            if (it) {
+                getMyLastLocation()
+            } else {
+                binding.cbShareLocation.isChecked = false
+                clearUserLocation()
+            }
+        }
     }
 
     private fun setStoryImage() {
@@ -103,6 +117,10 @@ class AddStoryActivity : AppCompatActivity() {
                     )
                 }
             }
+        }
+
+        cbShareLocation.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.isShareLocationChecked.value = isChecked
         }
 
         edtDescription.addTextChangedListener(afterTextChanged = {
@@ -193,6 +211,66 @@ class AddStoryActivity : AppCompatActivity() {
         )
 
         return bitmap
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Precise location access granted.
+                    getMyLastLocation()
+                }
+
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Only approximate location access granted.
+                    getMyLastLocation()
+                }
+
+                else -> {
+                    // No location access granted.
+                    Alert.showAlert(
+                        this@AddStoryActivity,
+                        AlertType.ERROR,
+                        getString(R.string.location_permission_denied)
+                    )
+                    viewModel.isShareLocationChecked.value = false
+                }
+            }
+        }
+
+    private fun checkPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun getMyLastLocation() {
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { myLocation ->
+                if (myLocation != null) {
+                    viewModel.setUserLocation(myLocation.latitude, myLocation.longitude)
+                } else {
+                    Alert.showAlert(
+                        this@AddStoryActivity,
+                        AlertType.ERROR,
+                        getString(R.string.location_not_found)
+                    )
+                    viewModel.isShareLocationChecked.value = false
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     companion object {

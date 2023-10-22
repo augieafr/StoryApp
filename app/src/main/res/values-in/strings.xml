@@ -27,4 +27,7 @@
     <string name="create_story">Buat cerita</string>
     <string name="retry">Coba lagi</string>
     <string name="something_wrong">Terjadi kesalahan, coba lagi nanti</string>
+    <string name="share_my_location">Bagikan lokasiku?</string>
+    <string name="location_not_found">Tidak bisa menemukan lokasimu, coba lagi nanti.</string>
+    <string name="location_permission_denied">Untuk dapat menggunakan fitur ini, tolong beri akses lokasi di ponselmu.</string>
 </resources>
