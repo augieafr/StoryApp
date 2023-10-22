@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -66,6 +67,7 @@ dependencies {
     implementation("androidx.paging:paging-runtime:3.2.1")
 
     implementation("androidx.room:room-ktx:2.6.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
     ksp("androidx.room:room-compiler:2.6.0")
     implementation("androidx.room:room-paging:2.6.0")
 

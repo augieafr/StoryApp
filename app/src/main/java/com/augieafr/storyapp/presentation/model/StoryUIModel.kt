@@ -5,6 +5,6 @@ data class StoryUIModel(
     val userName: String,
     val description: String,
     val photoUrl: String,
-    val lat: Float? = null,
-    val lon: Float? = null
+    val lat: Double?,
+    val lon: Double?
 )

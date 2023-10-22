@@ -50,6 +50,22 @@ class StoryRepository(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getStories(location: Int = 0) = executeRequest { flowCollector, token ->
+        val result = apiService.getStories(token, null, null, location)
+        flowCollector.emit(ResultState.Loading(false))
+        if (result.isSuccessful) {
+            result.body()?.listStory?.let { listItem ->
+                flowCollector.emit(ResultState.Success(listItem.map {
+                    it.toStoryUIModel()
+                }))
+            } ?: run {
+                flowCollector.emit(ResultState.Error(NoDataException()))
+            }
+        } else {
+            flowCollector.emit(ResultState.Error(result.getException()))
+        }
+    }
+
     fun getDetailStories(id: String) = executeRequest { flowCollector, token ->
         val result = apiService.getDetailStory(token, id)
         flowCollector.emit(ResultState.Loading(false))

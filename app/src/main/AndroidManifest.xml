@@ -17,18 +17,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StoryApp"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <activity
+            android:name=".presentation.nearby_story.NearbyStoryActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:label="@string/title_activity_nearby_story" />
         <activity
             android:name=".presentation.detail_story.DetailStoryActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
             android:name=".presentation.add_story.AddStoryActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:exported="false" />
         <activity
             android:name=".presentation.home.HomeActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
             android:name=".presentation.auth.AuthActivity"
             android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

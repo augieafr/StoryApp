@@ -18,6 +18,7 @@ import com.augieafr.storyapp.presentation.add_story.AddStoryActivity
 import com.augieafr.storyapp.presentation.auth.AuthActivity
 import com.augieafr.storyapp.presentation.detail_story.DetailStoryActivity
 import com.augieafr.storyapp.presentation.list_story.ListStoryFragment
+import com.augieafr.storyapp.presentation.nearby_story.NearbyStoryActivity
 import com.augieafr.storyapp.presentation.utils.Alert
 import com.augieafr.storyapp.presentation.utils.AlertType
 import com.augieafr.storyapp.presentation.utils.ViewModelProvider
@@ -91,7 +92,9 @@ class HomeActivity : AppCompatActivity() {
 
         fabNearbyStory.setOnClickListener {
             viewModel.changeFabState()
-            // TODO goToMapActivity
+            startActivity(
+                Intent(this@HomeActivity, NearbyStoryActivity::class.java)
+            )
         }
 
         imgLogout.setOnClickListener {

@@ -16,13 +16,22 @@ fun ListStoryItem.toStoryEntity() = StoryEntity(
     lon = lon,
 )
 
+fun ListStoryItem.toStoryUIModel() = StoryUIModel(
+    id = id,
+    userName = name,
+    description = description,
+    photoUrl = photoUrl,
+    lat = lat?.toDouble(),
+    lon = lon?.toDouble(),
+)
+
 fun StoryEntity.toStoryUIModel() = StoryUIModel(
     id = id,
     userName = name,
     description = description,
     photoUrl = photoUrl,
-    lat = lat,
-    lon = lon,
+    lat = lat?.toDouble(),
+    lon = lon?.toDouble(),
 )
 
 fun <T> Response<T>.getException(): Exception {
